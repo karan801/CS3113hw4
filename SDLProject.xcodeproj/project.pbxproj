@@ -15,9 +15,18 @@
 		DBDF1B692323DEEA007CECB1 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBDF1B662323DEEA007CECB1 /* SDL2.framework */; };
 		DBDF1B6A2323DEEA007CECB1 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBDF1B672323DEEA007CECB1 /* SDL2_image.framework */; };
 		DBDF1B6B2323DEEA007CECB1 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBDF1B682323DEEA007CECB1 /* SDL2_mixer.framework */; };
-		E9F0778123FA11B800E4F226 /* ctg.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9F0778023FA119000E4F226 /* ctg.png */; };
-		E9F0778323FA146500E4F226 /* dio.jpg in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9F0778223FA145C00E4F226 /* dio.jpg */; };
-		E9F0778923FA1A5700E4F226 /* sword.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9F0778823FA1A5000E4F226 /* sword.png */; };
+		E99EBACA241FE462006D1F1F /* uhoh_tile.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E99EBAC9241FE456006D1F1F /* uhoh_tile.png */; };
+		E99EBACB241FE464006D1F1F /* solution_tile.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E99EBAC8241FE456006D1F1F /* solution_tile.png */; };
+		E99EBACE241FE76A006D1F1F /* lunar_lander.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E99EBACD241FE763006D1F1F /* lunar_lander.png */; };
+		E99EBAD024202557006D1F1F /* font1.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E99EBACF24202551006D1F1F /* font1.png */; };
+		E9B253E9241EB78A00030330 /* platformPack_tile001.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9B253E8241EB78400030330 /* platformPack_tile001.png */; };
+		E9FBAEAE241E8CE700B83393 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9FBAEAC241E8CE700B83393 /* main.cpp */; };
+		E9FBAEAF241E8CE700B83393 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9FBAEAD241E8CE700B83393 /* Entity.cpp */; };
+		E9FBAEB0241E8CFC00B83393 /* main.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9FBAEAC241E8CE700B83393 /* main.cpp */; };
+		E9FBAEB1241E8CFE00B83393 /* Entity.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9FBAEAD241E8CE700B83393 /* Entity.cpp */; };
+		E9FBAEB2241E8D0100B83393 /* Entity.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9FBAEAB241E8CE700B83393 /* Entity.h */; };
+		E9FBAEB4241E8DD300B83393 /* george_0.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9FBAEB3241E8DBF00B83393 /* george_0.png */; };
+		E9FBAEB6241E8E1C00B83393 /* ctg.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E9FBAEB5241E8E1700B83393 /* ctg.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,10 +36,17 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				E9FBAEB4241E8DD300B83393 /* george_0.png in CopyFiles */,
 				DBDF1B612323DE9E007CECB1 /* shaders in CopyFiles */,
-				E9F0778923FA1A5700E4F226 /* sword.png in CopyFiles */,
-				E9F0778123FA11B800E4F226 /* ctg.png in CopyFiles */,
-				E9F0778323FA146500E4F226 /* dio.jpg in CopyFiles */,
+				E99EBACA241FE462006D1F1F /* uhoh_tile.png in CopyFiles */,
+				E99EBACE241FE76A006D1F1F /* lunar_lander.png in CopyFiles */,
+				E9FBAEB0241E8CFC00B83393 /* main.cpp in CopyFiles */,
+				E99EBAD024202557006D1F1F /* font1.png in CopyFiles */,
+				E9FBAEB1241E8CFE00B83393 /* Entity.cpp in CopyFiles */,
+				E99EBACB241FE464006D1F1F /* solution_tile.png in CopyFiles */,
+				E9FBAEB2241E8D0100B83393 /* Entity.h in CopyFiles */,
+				E9B253E9241EB78A00030330 /* platformPack_tile001.png in CopyFiles */,
+				E9FBAEB6241E8E1C00B83393 /* ctg.png in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,9 +65,16 @@
 		DBDF1B662323DEEA007CECB1 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		DBDF1B672323DEEA007CECB1 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
 		DBDF1B682323DEEA007CECB1 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
-		E9F0778023FA119000E4F226 /* ctg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ctg.png; sourceTree = "<group>"; };
-		E9F0778223FA145C00E4F226 /* dio.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dio.jpg; sourceTree = "<group>"; };
-		E9F0778823FA1A5000E4F226 /* sword.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sword.png; sourceTree = "<group>"; };
+		E99EBAC8241FE456006D1F1F /* solution_tile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = solution_tile.png; sourceTree = "<group>"; };
+		E99EBAC9241FE456006D1F1F /* uhoh_tile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uhoh_tile.png; sourceTree = "<group>"; };
+		E99EBACD241FE763006D1F1F /* lunar_lander.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lunar_lander.png; sourceTree = "<group>"; };
+		E99EBACF24202551006D1F1F /* font1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = font1.png; sourceTree = "<group>"; };
+		E9B253E8241EB78400030330 /* platformPack_tile001.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = platformPack_tile001.png; sourceTree = "<group>"; };
+		E9FBAEAB241E8CE700B83393 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
+		E9FBAEAC241E8CE700B83393 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E9FBAEAD241E8CE700B83393 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
+		E9FBAEB3241E8DBF00B83393 /* george_0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = george_0.png; sourceTree = "<group>"; };
+		E9FBAEB5241E8E1700B83393 /* ctg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ctg.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,9 +96,6 @@
 		DBDF1B462323DE3F007CECB1 = {
 			isa = PBXGroup;
 			children = (
-				E9F0778023FA119000E4F226 /* ctg.png */,
-				E9F0778223FA145C00E4F226 /* dio.jpg */,
-				E9F0778823FA1A5000E4F226 /* sword.png */,
 				DBDF1B512323DE3F007CECB1 /* SDLProject */,
 				DBDF1B502323DE3F007CECB1 /* Products */,
 				DBDF1B5F2323DE92007CECB1 /* Frameworks */,
@@ -96,6 +116,16 @@
 				DBDF1B5B2323DE8D007CECB1 /* glm */,
 				DBDF1B5D2323DE8D007CECB1 /* ShaderProgram.cpp */,
 				DBDF1B592323DE8D007CECB1 /* ShaderProgram.h */,
+				E9FBAEAD241E8CE700B83393 /* Entity.cpp */,
+				E9FBAEAB241E8CE700B83393 /* Entity.h */,
+				E9FBAEAC241E8CE700B83393 /* main.cpp */,
+				E9B253E8241EB78400030330 /* platformPack_tile001.png */,
+				E99EBAC8241FE456006D1F1F /* solution_tile.png */,
+				E99EBACF24202551006D1F1F /* font1.png */,
+				E99EBAC9241FE456006D1F1F /* uhoh_tile.png */,
+				E99EBACD241FE763006D1F1F /* lunar_lander.png */,
+				E9FBAEB3241E8DBF00B83393 /* george_0.png */,
+				E9FBAEB5241E8E1700B83393 /* ctg.png */,
 				DBDF1B5C2323DE8D007CECB1 /* shaders */,
 				DBDF1B5A2323DE8D007CECB1 /* stb_image.h */,
 				DBDF1B522323DE3F007CECB1 /* main.cpp */,
@@ -172,8 +202,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9FBAEAF241E8CE700B83393 /* Entity.cpp in Sources */,
 				DBDF1B532323DE3F007CECB1 /* main.cpp in Sources */,
 				DBDF1B5E2323DE8D007CECB1 /* ShaderProgram.cpp in Sources */,
+				E9FBAEAE241E8CE700B83393 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
