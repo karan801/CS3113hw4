@@ -11,8 +11,13 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 
-enum EntityType {PLAYER, PLATFORM, SOLUTION};
+#include <time.h>
+
+enum EntityType {NONE, PLAYER, PLATFORM, ENEMY};
+enum AIType {WALKER, WAITANDGO, JUMPER, STALKER};
+enum AIState {IDLE, WALKING, JUMPING, STALKING, DEAD};
 enum GameMode {GOING,SUCCESS,FAILURE};
+
 
 class Entity {
 public:
@@ -21,6 +26,8 @@ public:
     glm::vec3 acceleration;
     glm::vec3 velocity;
     
+    AIType aiType;
+    AIState aiState;
     EntityType type;
     EntityType lastCollided;
     
@@ -30,7 +37,7 @@ public:
     float height = 1; //may need to change these 2 variables as needed, otherwise fixed for now.
     
     bool jump = false;
-    float jumpPower = 0;
+    float jumpPower = 1.0f;
     
     float speed;
     
@@ -52,17 +59,25 @@ public:
     
     bool isActive = true;
     
-    bool collidedTop = false;
-    bool collidedBottom = false;
-    bool collidedLeft = false;
-    bool collidedRight = false;
+    EntityType collidedTop = NONE;
+    EntityType collidedBottom = NONE;
+    EntityType collidedLeft = NONE;
+    EntityType collidedRight = NONE;
     Entity();
+    
+    void flipActive();
     
     bool CheckCollision(Entity *other);
     void CheckCollisionsY(Entity *objects, int objectCount);
     void CheckCollisionsX(Entity *objects, int objectCount);
     
-    GameMode Update(float deltaTime, Entity *platforms, int platformCount);
+    GameMode Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Entity *platforms, int platformCount);
     void Render(ShaderProgram *program);
     void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
+    
+    void AI(Entity *player, float deltaTime);
+    void AIWalker();
+    void AIWaitAndGo(Entity *player);
+    void AIJumper(Entity *player);
+    void AIStalker(Entity *player);
 };

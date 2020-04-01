@@ -2,14 +2,24 @@
 
 Entity::Entity()
 {
-    position = glm::vec3(0);
-    movement = glm::vec3(0);
-    acceleration = glm::vec3(0);
-    velocity = glm::vec3(0);
-    speed = 0;
+    position = glm::vec3(0); //coords
+    movement = glm::vec3(0); //direction of moving
+    acceleration = glm::vec3(0); //how fast speed increases
+    velocity = glm::vec3(0); //how fast the entity is going
+    speed = 0; // a scalar of how fast the entity is going
     flag = GOING;
     
     modelMatrix = glm::mat4(1.0f);
+}
+
+void Entity::flipActive() {
+    if (this)
+    {
+        if (isActive)
+            isActive = false;
+        else
+            isActive = true;
+    }
 }
 
 bool Entity::CheckCollision(Entity *other) {
@@ -19,6 +29,18 @@ bool Entity::CheckCollision(Entity *other) {
     
     if (xdist < 0 && ydist < 0){
         lastCollided = other->type;
+        if (type == ENEMY) {
+            if (velocity.y > 0 || other->velocity.y < 0) {
+                collidedTop = other->type;
+            } else if (velocity.y < 0) {
+                collidedBottom = other->type;
+            }
+            if (velocity.x > 0) {
+                collidedRight = other->type;
+            } else if (velocity.x < 0) {
+                collidedLeft = other->type;
+            }
+        }
         return true;
     }
     return false;
@@ -34,12 +56,12 @@ void Entity::CheckCollisionsY(Entity *objects, int objectCount) {
             if (velocity.y > 0) {
                 position.y -= penetrationY;
                 velocity.y = 0;
-                collidedTop = true;
+                collidedTop = object->type;
             }
             else if (velocity.y < 0) {
                 position.y += penetrationY;
                 velocity.y = 0;
-                collidedBottom = true;
+                collidedBottom = object->type;
             }
         }
     }
@@ -55,48 +77,174 @@ void Entity::CheckCollisionsX(Entity *objects, int objectCount) {
             if (velocity.x > 0) {
                 position.x -= penetrationX;
                 velocity.x = 0;
-                collidedRight = true;
+                collidedRight = object->type;
             } else if (velocity.x < 0) {
                 position.x += penetrationX;
                 velocity.x = 0;
-                collidedLeft = true;
+                collidedLeft = object->type;
             }
         }
     }
 }
 
-GameMode Entity::Update(float deltaTime, Entity *platforms, int platformCount)
-{
-    if (type == PLAYER) {
-        if (lastCollided == PLATFORM) {
+void Entity::AIWalker () {
+    movement = glm::vec3(-1.0f,0.0f,0.0f);
+}
+
+void Entity::AIWaitAndGo (Entity *player) {
+    //jump = false;
+    switch (aiState)
+    {
+        case IDLE:
+            if (glm::distance(position, player->position) <3.0f) {
+                aiState = WALKING;
+            }
+            break;
+        case WALKING:
+            if (player->position.x < position.x){
+                movement = glm::vec3(-1.0f,0.0f,0.0f);
+            } else {
+                movement = glm::vec3(1.0f,0.0f,0.0f);
+            }
+            break;
+        case JUMPING:
+            break;
+        case STALKING:
+            break;
+        case DEAD:
             isActive = false;
+            return;
+            break;
+    }
+}
+
+void Entity::AIJumper (Entity *player) {
+    switch (aiState)
+    {
+        case IDLE: //starts in IDLE
+            jump = true;
+            aiState=WALKING;
+            break;
+        case WALKING:
+            if (player->position.x < position.x) {
+                movement = glm::vec3(-1.0f,0.0f,0.0f);
+            } else {
+                movement = glm::vec3(1.0f,0.0f,0.0f);
+            }
+            aiState=JUMPING;
+            break;
+        case JUMPING:
+            if (player->position.x < position.x) {
+                movement = glm::vec3(-1.0f,0.0f,0.0f);
+            } else {
+                movement = glm::vec3(1.0f,0.0f,0.0f);
+            }
+            aiState = WALKING;
+            break;
+        case STALKING:
+            break;
+        case DEAD:
+            isActive = false;
+            return;
+            break;
+    }
+}
+
+void Entity::AIStalker (Entity *player) {
+    //elapsed_time = difftime(start,elapsed_time);
+    switch (aiState)
+    {
+        case IDLE: //starts in IDLE
+            if (glm::distance(position, player->position) >1.0f)
+                aiState=WALKING;
+            break;
+        case WALKING:
+            if (glm::distance(position, player->position) >1.0f)
+            {
+                if (player->position.x < position.x) {
+                    movement = glm::vec3(-1.0f,0.0f,0.0f);
+                } else {
+                    movement = glm::vec3(1.0f,0.0f,0.0f);
+                }
+            } else
+                aiState=WALKING;
+            break;
+        case JUMPING:
+            break;
+        case STALKING:
+            if (glm::distance(position, player->position) <1.0f && glm::distance(position, player->position) > 0.001f)
+            {
+                if (player->position.x < position.x) {
+                    movement = glm::vec3(1.0f,0.0f,0.0f);
+                } else {
+                    movement = glm::vec3(-1.0f,0.0f,0.0f);
+                }
+            }
+            else
+                aiState = WALKING;
+            break;
+        case DEAD:
+            isActive = false;
+            return;
+            break;
+    }
+}
+               
+void Entity::AI(Entity *player, float deltaTime) {
+    if (collidedTop == PLAYER) {
+        isActive = false;
+        aiState = DEAD;
+        return;
+    }
+    switch(aiType) {
+        case WALKER:
+            AIWalker();
+            break;
+        case WAITANDGO:
+            AIWaitAndGo(player);
+            break;
+        case JUMPER:
+            jumpPower = 2.0f;
+            AIJumper(player);
+            break;
+        case STALKER:
+            AIStalker(player);
+            break;
+    }
+}
+
+GameMode Entity::Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Entity *platforms, int platformCount)
+{
+    if (type == ENEMY) {
+        CheckCollision(player);
+        if (collidedTop == PLAYER) {
+            isActive = false;
+            aiState = DEAD;
+            player->jump = true;
+        } else if (collidedLeft == PLAYER || collidedRight == PLAYER || collidedBottom == PLAYER ){
+            player->flipActive();
             flag = FAILURE;
             return flag;
         }
-        else if (lastCollided == SOLUTION) {
-            isActive = false;
-            flag = SUCCESS;
-            return flag;
-        }
-        // Do all things
     }
-    /*else if (type == PLATFORM && lastCollided == PLAYER) {
-        // failure
-        isActive = false;
-        flag = FAILURE;
-        return flag;
+    int allDead = 0;
+    for (int i = 0; i < enemyCount; i++) {
+        if (enemies[i].isActive == false)
+            allDead++;
     }
-    else if (type == SOLUTION && lastCollided == PLAYER && collidedTop) {
-        // check for collision!
-        isActive = false;
+    if (allDead == enemyCount) {
+        player->flipActive();
         flag = SUCCESS;
         return flag;
-    }*/
-    collidedTop = false;
-    collidedBottom = false;
-    collidedLeft = false;
-    collidedRight = false;
+    }
+    collidedTop = NONE;
+    collidedBottom = NONE;
+    collidedLeft = NONE;
+    collidedRight = NONE;
     
+    if (type == ENEMY) {
+        AI(player, deltaTime);
+    }
     
     if (animIndices != NULL) {
         if (glm::length(movement) != 0) {
@@ -130,6 +278,8 @@ GameMode Entity::Update(float deltaTime, Entity *platforms, int platformCount)
     position.x += velocity.x * deltaTime; // Move on X
     CheckCollisionsX(platforms, platformCount);// Fix if needed
     
+    //CheckCollisionsY(enemies,enemyCount);
+    //CheckCollisionsX(enemies,enemyCount); //deletes enemies??
     
     
     modelMatrix = glm::mat4(1.0f);
@@ -139,7 +289,7 @@ GameMode Entity::Update(float deltaTime, Entity *platforms, int platformCount)
 
 void Entity::DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index)
 {
-    /*float u = (float)(index % animCols) / (float)animCols;
+    float u = (float)(index % animCols) / (float)animCols;
     float v = (float)(index / animCols) / (float)animRows;
     
     float width = 1.0f / (float)animCols;
@@ -147,8 +297,8 @@ void Entity::DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID
     
     float texCoords[] = { u, v + height, u + width, v + height, u + width, v,
         u, v + height, u + width, v, u, v};
-    */
-    float texCoords[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
+    
+    //float texCoords[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
     float vertices[]  = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
     
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -166,7 +316,7 @@ void Entity::DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID
 }
 
 void Entity::Render(ShaderProgram *program) {
-    if (isActive == false) return;
+    if (isActive == false && type != PLATFORM) return;
     program->SetModelMatrix(modelMatrix);
     
     if (animIndices != NULL) {
