@@ -14,8 +14,8 @@
             filePath = "SDLProject/Entity.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
             landmarkName = "Entity::AIJumper(player)"
             landmarkType = "7">
          </BreakpointContent>
@@ -33,6 +33,22 @@
             startingLineNumber = "15"
             endingLineNumber = "15"
             landmarkName = "Entity::flipActive()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "76211D4A-3F29-4313-BDD8-4690228948C9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SDLProject/Entity.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
+            landmarkName = "Entity::Update(deltaTime, player, enemies, enemyCount, platforms, platformCount)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

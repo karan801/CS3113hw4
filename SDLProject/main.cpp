@@ -233,7 +233,7 @@ void Initialize() {
     
     
     for (int i = 0; i < PLATFORM_COUNT; i++) {
-        state.platforms[i].Update(0, NULL, NULL, NULL, NULL, 0);
+        state.platforms[i].Update(0, NULL, NULL, NULL, state.platforms, PLATFORM_COUNT);
     }
  
 }

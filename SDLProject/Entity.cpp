@@ -15,6 +15,8 @@ Entity::Entity()
 void Entity::flipActive() {
     if (this)
     {
+        if (type == PLATFORM)
+            isActive = true;
         if (isActive)
             isActive = false;
         else
@@ -223,6 +225,7 @@ GameMode Entity::Update(float deltaTime, Entity *player, Entity *enemies, int en
             player->jump = true;
         } else if (collidedLeft == PLAYER || collidedRight == PLAYER || collidedBottom == PLAYER ){
             player->flipActive();
+            //player->isActive = false;
             flag = FAILURE;
             return flag;
         }
@@ -232,8 +235,9 @@ GameMode Entity::Update(float deltaTime, Entity *player, Entity *enemies, int en
         if (enemies[i].isActive == false)
             allDead++;
     }
-    if (allDead == enemyCount) {
+    if (allDead == enemyCount && type == ENEMY) {
         player->flipActive();
+        //player->isActive = false;
         flag = SUCCESS;
         return flag;
     }
