@@ -11,111 +11,57 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #include "Entity.h"
+#include "Map.h"
+#include "Util.h"
+#include "Scene.h"
+#include "Menu.h"
+#include "Level1.h"
+#include "Level2.h"
+#include "Level3.h"
 
 #include <vector>
 #include <iostream>
 
 #include <SDL_mixer.h>
 
-#define PLATFORM_COUNT 47
-
-#define ENEMY_COUNT 3
 using namespace std;
+//======== to do list
+//====done
+//-main menu screen, name of game, press enter to start game (or take to first level).
+//-3 levels, don't need to be complicated or long. should be able to scroll.
+//End of three levels should show win
+//one looping background music, one sound effect
+//use any graphics or themes.
+//-Player should have three lives. If they run out of lives, should show they lose.
+//-No separate scene needed for losing, can just draw text.
+//-can lose life by falling pit, touching enemy or something else.
+//one type of moving ai, a couple in game, different behavior would be great
+//====incomplete
+//ability to kill AI (optional)
+//===================
 
-struct GameState {
-    Entity *player;
-    Entity *platforms;
-    Entity *enemies;
-    GameMode flag;
-};
-
-GameState state;
-
+Scene *currentScene;
+Scene *sceneList[4];
+GameMode mode = MENU;
+bool gameIsRunning = true;
 
 SDL_Window* displayWindow;
-bool gameIsRunning = true;
 
 ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 
-void DrawText(ShaderProgram *program, GLuint fontTextureID, std::string text, float size, float spacing, glm::vec3 position) {
-    float width = 1.0f / 16.0f;
-    float height = 1.0f / 16.0f;
-    
-    std::vector<float> vertices;
-    std::vector<float> texCoords;
-    for(int i = 0; i < text.size(); i++) {
-        int index = (int)text[i];
-        float offset = (size + spacing) * i;
-        float u = (float)(index % 16) / 16.0f;
-        float v = (float)(index / 16) / 16.0f;
-        vertices.insert(vertices.end(), {
-            offset + (-0.5f * size), 0.5f * size,
-            offset + (-0.5f * size), -0.5f * size,
-            offset + (0.5f * size), 0.5f * size,
-            offset + (0.5f * size), -0.5f * size,
-            offset + (0.5f * size), 0.5f * size,
-            offset + (-0.5f * size), -0.5f * size,
-        });
-        
-        texCoords.insert(texCoords.end(), {
-            u, v,
-            u, v + height,
-            u + width, v,
-            u + width, v + height,
-            u + width, v,
-            u, v + height,
-        });
-    }
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, position);
-    program->SetModelMatrix(modelMatrix);
-    
-    glUseProgram(program->programID);
-    
-    glVertexAttribPointer(program->positionAttribute, 2, GL_FLOAT, false, 0, vertices.data());
-    glEnableVertexAttribArray(program->positionAttribute);
-    
-    glVertexAttribPointer(program->texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords.data());
-    glEnableVertexAttribArray(program->texCoordAttribute);
-    
-    glBindTexture(GL_TEXTURE_2D, fontTextureID);
-    glDrawArrays(GL_TRIANGLES, 0, (int)(text.size() * 6));
-    
-    glDisableVertexAttribArray(program->positionAttribute);
-    glDisableVertexAttribArray(program->texCoordAttribute);
-}
- 
+Mix_Music *music;
+Mix_Chunk *bounce;
 
-GLuint LoadTexture(const char* filePath) {
-    int w, h, n;
-    unsigned char* image = stbi_load(filePath, &w, &h, &n, STBI_rgb_alpha);
-    
-    if (image == NULL) {
-        std::cout << "Unable to load image. Make sure the path is correct\n";
-        assert(false);
-    }
-    
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-    stbi_image_free(image);
-    return textureID;
+void SwitchToScene(int sceneNum) {
+    currentScene = sceneList[sceneNum];
+    currentScene->Initialize();
 }
 
-int jumpCount;
 void Initialize() {
-    SDL_Init(SDL_INIT_VIDEO);
-    displayWindow = SDL_CreateWindow("Karan's Test with AI!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    displayWindow = SDL_CreateWindow("Karan's (Kind-of) First Game!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
     SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
     SDL_GL_MakeCurrent(displayWindow, context);
     
@@ -143,104 +89,19 @@ void Initialize() {
     
    
     // Initialize Game Objects
-    
-    // Initialize Player
-    state.player = new Entity();
-    state.player->position = glm::vec3(-4.0f, 2.0f, 0);
-    state.player->movement = glm::vec3(0);
-    state.player->acceleration = glm::vec3(0, -4.0f, 0);
-    state.player->speed = 1.5f;
-    state.player->textureID = LoadTexture("george_0.png");
-    state.player->animRight = new int[4] {3, 7, 11, 15};
-    state.player->animLeft = new int[4] {1, 5, 9, 13};
-    state.player->animUp = new int[4] {2, 6, 10, 14};
-    state.player->animDown = new int[4] {0, 4, 8, 12};
-
-    state.player->animIndices = state.player->animRight;
-    state.player->animFrames = 4;
-    state.player->animIndex = 0;
-    state.player->animTime = 0;
-    state.player->animCols = 4;
-    state.player->animRows = 4;
-    
-    state.player->height = 0.8f; // to help with graphic empty edges
-    state.player->width = 0.75f;
-    
-    state.player->jumpPower = 4.0f;
-    state.player->type = PLAYER;
-    
-    // Initialize Enemies
-    state.enemies = new Entity[ENEMY_COUNT];
-    GLuint enemyTextureID = LoadTexture("ctg.png");
-    
-    for (int i = 0; i < ENEMY_COUNT; i++){
-        state.enemies[i].type = ENEMY;
-        state.enemies[i].textureID = enemyTextureID;
-        if (i == 2)
-            state.enemies[i].position = glm::vec3(3.0f,1.5f,0.0f);
-        else if (i == 1)
-            state.enemies[i].position = glm::vec3(-3.0,-2,0.0f);
-        else
-            state.enemies[i].position = glm::vec3(3.0f,-2.5f,0.0f);
-        state.enemies[i].height = 1.0f;
-        state.enemies[i].width = 1.0f;
-        state.enemies[i].acceleration = glm::vec3(0.0f, -4.0f, 0.0f);
-        state.enemies[i].speed = 1;
-    }
-    state.enemies[0].aiType = JUMPER;
-    state.enemies[0].aiState = IDLE;
-    jumpCount = 0;
-    
-    state.enemies[1].aiType = STALKER;
-    state.enemies[1].aiState = IDLE;
-    
-    state.enemies[2].aiType = WAITANDGO;
-    state.enemies[2].aiState = IDLE;
-    
-    // tiles
-    state.platforms = new Entity[PLATFORM_COUNT];
-    GLuint platformTextureID = LoadTexture("platformPack_tile001.png");
-    
-    for (int i = 0; i < PLATFORM_COUNT; i++) {
-        state.platforms[i].type = PLATFORM;
-        state.platforms[i].textureID = platformTextureID;
-        if (i < 12) {
-            state.platforms[i].position = glm::vec3(-5.0f + i, -3.5f, 0.0f);//floor
-        }
-        else if (i < 18) {
-            state.platforms[i].position = glm::vec3(-5.0f, -2.5 + i-12, 0.0f); //left wall
-        }
-        else if (i < 27) {
-            state.platforms[i].position = glm::vec3(5.0f, -2.5 + i-19, 0.0f); //right wall
-        }
-        else if (i < 39) {
-            state.platforms[i].position = glm::vec3(-5.0f +i-27, 3.5f, 0.0f); //ceiling
-        }
-        else if (i < 44) {
-            state.platforms[i].position = glm::vec3(0.0f +i-39, 0.0f, 0.0f); //middle platform
-        }
-        else if (i < 45) {
-            state.platforms[i].position = glm::vec3(0.0f,1.0f,0.0f);
-        }
-        else if (i < 46) {
-            state.platforms[i].position = glm::vec3(0.0f, -3.0f, 0.0f);
-        }
-        else {
-            state.platforms[i].position = glm::vec3(-4.0f,0.0f,0.0f); //starting platform
-        }
-    }
-    
-    
-    
-    for (int i = 0; i < PLATFORM_COUNT; i++) {
-        state.platforms[i].Update(0, NULL, NULL, NULL, state.platforms, PLATFORM_COUNT);
-    }
- 
+    sceneList[0] = new Menu();
+    sceneList[1] = new Level1();
+    sceneList[2] = new Level2();
+    sceneList[3] = new Level3();
+    SwitchToScene(0);
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+    music = Mix_LoadMUS("crypto.mp3");
+    Mix_PlayMusic(music, -1);
+    Mix_VolumeMusic(MIX_MAX_VOLUME/4);
 }
 
 void ProcessInput() {
-    
-    state.player->movement = glm::vec3(0);
+        currentScene->state.player->movement = glm::vec3(0);
     
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -252,6 +113,12 @@ void ProcessInput() {
                 
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
+                    case SDLK_RETURN:
+                        if (mode == MENU || mode == MENUF || mode == MENUW) {
+                            SwitchToScene(1);
+                            mode = GOING;
+                        }
+                        break;
                     case SDLK_LEFT:
                         // Move the player left
                         break;
@@ -262,7 +129,7 @@ void ProcessInput() {
                         
                     case SDLK_UP:
                         // alternative jump
-                        state.player->jump = true;
+                        currentScene->state.player->jump = true;
                         break;
                         
                     case SDLK_a:
@@ -275,13 +142,13 @@ void ProcessInput() {
                         
                     case SDLK_w:
                         // alternative jump
-                        state.player->jump = true;
+                        currentScene->state.player->jump = true;
                         break;
                         
                     case SDLK_SPACE:
                         //if (state.player->collidedBottom) {
                         //}
-                        state.player->jump = true;
+                        currentScene->state.player->jump = true;
                         break;
                 }
                 break; // SDL_KEYDOWN
@@ -289,85 +156,99 @@ void ProcessInput() {
     }
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
-
     if (keys[SDL_SCANCODE_LEFT]) {
-        state.player->movement.x += -1.5f;
-        state.player->animIndices = state.player->animLeft;
+        currentScene->state.player->movement.x += -1.5f;
+        currentScene->state.player->animIndices = currentScene->state.player->animLeft;
     }
     else if (keys[SDL_SCANCODE_RIGHT]) {
-        state.player->movement.x += 1.5f;
-        state.player->animIndices = state.player->animRight;
+        currentScene->state.player->movement.x += 1.5f;
+        currentScene->state.player->animIndices = currentScene->state.player->animRight;
     }
     if (keys[SDL_SCANCODE_A]) {
-        state.player->movement.x += -1.5f;
-        state.player->animIndices = state.player->animLeft;
+        currentScene->state.player->movement.x += -1.5f;
+        currentScene->state.player->animIndices = currentScene->state.player->animLeft;
     }
     else if (keys[SDL_SCANCODE_D]) {
-        state.player->movement.x += 1.5f;
-        state.player->animIndices = state.player->animRight;
+        currentScene->state.player->movement.x += 1.5f;
+        currentScene->state.player->animIndices = currentScene->state.player->animRight;
     }
 
-    if (glm::length(state.player->movement) > 1.5f) {
-        state.player->movement = glm::normalize(state.player->movement);
+    if (glm::length(currentScene->state.player->movement) > 1.5f) {
+        currentScene->state.player->movement = glm::normalize(currentScene->state.player->movement);
     }
-
 }
 
 #define FIXED_TIMESTEP 0.0166666f
 float lastTicks = 0;
 float accumulator = 0.0f;
 void Update() {
-    if (state.flag == GOING) {
-        float ticks = (float)SDL_GetTicks() / 1000.0f;
-        float deltaTime = ticks - lastTicks;
-        lastTicks = ticks;
-        
-        deltaTime += accumulator;
-        if (deltaTime < FIXED_TIMESTEP) {
-            accumulator = deltaTime;
-            return;
-        }
-        
-        jumpCount++;
-        while (deltaTime >= FIXED_TIMESTEP) {
-        // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
-            state.player->Update(FIXED_TIMESTEP, state.player, state.enemies, ENEMY_COUNT, state.platforms, PLATFORM_COUNT); //here are the list of platforms and the number of platforms, look at each platform and check if im colliding. get out. dont change anything/update
-            for (int i = 0; i < ENEMY_COUNT; i++){
-                if (jumpCount/40 > 1 && state.enemies[i].aiType == JUMPER) {
-                    state.enemies[i].jump = true;
-                    jumpCount = 0;
-                }
-                state.flag = state.enemies[i].Update(FIXED_TIMESTEP, state.player, state.enemies, ENEMY_COUNT, state.platforms, PLATFORM_COUNT);
-                if (state.flag == SUCCESS || state.flag == FAILURE)
-                    break;
-            }
-            //state.flag = state.player->Update(FIXED_TIMESTEP, state.solution, SOLUTION_COUNT);
-            
-            deltaTime -= FIXED_TIMESTEP;
-        }
-        
+    float ticks = (float)SDL_GetTicks() / 1000.0f;
+    float deltaTime = ticks - lastTicks;
+    lastTicks = ticks;
+    
+    deltaTime += accumulator;
+    if (deltaTime < FIXED_TIMESTEP) {
         accumulator = deltaTime;
+        return;
+    }
+    /*if (currentScene->state.flag == GOING) {
+        currentScene->jumpCount++;*/
+    while (deltaTime >= FIXED_TIMESTEP) {
+    // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
+        if (mode != MENU && mode != MENUF && mode != MENUW){
+            mode = currentScene->Update(FIXED_TIMESTEP); //here are the list of platforms and the number of platforms, look at each platform and check if im colliding. get out. dont change anything/update
+        }
+        if (mode == MENUF) {
+            SwitchToScene(0);
+        }
+        deltaTime -= FIXED_TIMESTEP;
+        /*
+        for (int i = 0; i < ENEMY_COUNT; i++){
+            if (jumpCount/40 > 1 && state.enemies[i].aiType == JUMPER) {
+                state.enemies[i].jump = true;
+                jumpCount = 0;
+            }
+            state.flag = state.enemies[i].Update(FIXED_TIMESTEP, state.player, state.enemies, ENEMY_COUNT, state.platforms, PLATFORM_COUNT);
+            if (state.flag == SUCCESS || state.flag == FAILURE)
+                break;
+        }*/
+        //state.flag = state.player->Update(FIXED_TIMESTEP, state.solution, SOLUTION_COUNT);
+    }
+    accumulator = deltaTime;
+    
+    
+    viewMatrix = glm::mat4(1.0f);
+    if (5 < currentScene->state.player->position.x && currentScene->state.player->position.x < 25) {
+        viewMatrix = glm::translate(viewMatrix, glm::vec3(-currentScene->state.player->position.x, 3.75f, 0));
+    } else if (currentScene->state.player->position.x >= 25)
+        viewMatrix = glm::translate(viewMatrix, glm::vec3(25.0f, 3.75, 0));
+    else {
+        viewMatrix = glm::translate(viewMatrix, glm::vec3(-5.0f, 3.75, 0));
     }
 }
 
 
 void Render() {
+    program.SetViewMatrix(viewMatrix);
     glClear(GL_COLOR_BUFFER_BIT);
-    for (int i = 0; i < PLATFORM_COUNT; i++) {
-        state.platforms[i].Render(&program);
-    }
     
-    for (int i = 0; i < ENEMY_COUNT; i++) {
-        state.enemies[i].Render(&program);
-    }
-    state.player->Render(&program);
-    GLuint fontTextureID = LoadTexture("font1.png");
+    currentScene->Render(&program);
+    GLuint fontTextureID = Util::LoadTexture("font1.png");
+    if (mode == MENUW)
+        Util::DrawText(&program,fontTextureID,"Congrats! You Won. Play again?",0.2f,0.0f,glm::vec3(2.25f, -5.0f, 0.0f));
+    if (mode == MENUF)
+        Util::DrawText(&program,fontTextureID,"Failure. You lost. Play again?",0.2f,0.0f,glm::vec3(2.25f, -5.0f, 0.0f));
+    //currentScene->state.map->Render(&program);
+    //for (int i = 0; i < ENEMY_COUNT; i++) {
+        //state.enemies[i].Render(&program);
+    //}
+    /*GLuint fontTextureID = Util::LoadTexture("font1.png");
     DrawText(&program,fontTextureID,"Jump on their heads to win!",0.3f,0.0f,glm::vec3(-4.25f, 3.5f, 0.0f));
-    if (state.flag == FAILURE) {
+    if (currentScene->state.flag == FAILURE) {
         DrawText(&program,fontTextureID,"FAILURE.",1.0f,0.0f,glm::vec3(-3.5f, 0.0f, 0.0f));
-    } else if (state.flag == SUCCESS) {
+    } else if (currentScene->state.flag == SUCCESS) {
         DrawText(&program,fontTextureID,"SUCCESS!",1.0f,0.0f,glm::vec3(-3.5f, 0.0f, 0.0f));
-    }
+    }*/
     
     SDL_GL_SwapWindow(displayWindow);
 }
@@ -383,6 +264,13 @@ int main(int argc, char* argv[]) {
     while (gameIsRunning) {
         ProcessInput();
         Update();
+        
+        if (currentScene->state.nextScene == 4) {
+            mode = MENUW;
+            SwitchToScene(0);
+        } else if (currentScene->state.nextScene > 0) {
+            SwitchToScene(currentScene->state.nextScene);
+        }
         Render();
     }
     

@@ -1,3 +1,4 @@
+#pragma once
 #define GL_SILENCE_DEPRECATION
 
 #ifdef _WINDOWS
@@ -11,12 +12,16 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 
+#include <SDL_mixer.h>
+
 #include <time.h>
+#include "Map.h"
+#include "Util.h"
 
 enum EntityType {NONE, PLAYER, PLATFORM, ENEMY};
-enum AIType {WALKER, WAITANDGO, JUMPER, STALKER};
-enum AIState {IDLE, WALKING, JUMPING, STALKING, DEAD};
-enum GameMode {GOING,SUCCESS,FAILURE};
+enum AIType {WALKER, JUMPER, STALKER, FOLLOWER};
+enum AIState {IDLE, WALKING, JUMPING, STALKING, DEAD, FOLLOWING, LEADING};
+enum GameMode {GOING,MENU,MENUW,MENUF};
 
 
 class Entity {
@@ -31,13 +36,13 @@ public:
     EntityType type;
     EntityType lastCollided;
     
-    GameMode flag = GOING;
     
     float width = 1;
     float height = 1; //may need to change these 2 variables as needed, otherwise fixed for now.
     
     bool jump = false;
-    float jumpPower = 1.0f;
+    float jumpPower = 2.0f;
+    int jumpCount = 0;
     
     float speed;
     
@@ -58,26 +63,35 @@ public:
     int animRows = 0;
     
     bool isActive = true;
+    int lives = 3;
+    bool invulnerability = false;
+    int invulnerabilityCount = 0;
     
-    EntityType collidedTop = NONE;
-    EntityType collidedBottom = NONE;
-    EntityType collidedLeft = NONE;
-    EntityType collidedRight = NONE;
+    bool collidedTop = false;
+    bool collidedTopLeft = false;
+    bool collidedTopRight = false;
+    bool collidedBottom = false;
+    bool collidedBottomLeft = false;
+    bool collidedBottomRight = false;
+    bool collidedLeft = false;
+    bool collidedRight = false;
     Entity();
-    
-    void flipActive();
     
     bool CheckCollision(Entity *other);
     void CheckCollisionsY(Entity *objects, int objectCount);
     void CheckCollisionsX(Entity *objects, int objectCount);
+    void CheckCollisionsX(Map *map);
+    void CheckCollisionsY(Map *map);
     
-    GameMode Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Entity *platforms, int platformCount);
+    void Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Map *map);
     void Render(ShaderProgram *program);
     void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
     
-    void AI(Entity *player, float deltaTime);
+    Entity findNearestFollower(Entity *enemies, int enemyCount);
+    
+    void AI(Entity *player, Entity *enemies, int enemyCount);
     void AIWalker();
-    void AIWaitAndGo(Entity *player);
     void AIJumper(Entity *player);
     void AIStalker(Entity *player);
+    void AIFollower(Entity *player, Entity *enemies, int enemyCount);
 };
