@@ -30,6 +30,10 @@
 		E987A5E02442A60C009C1900 /* Level2.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = E987A5DC2442A602009C1900 /* Level2.cpp */; };
 		E987A5E32442C53C009C1900 /* bounce.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = E987A5E22442C53A009C1900 /* bounce.wav */; };
 		E987A5E42442C53E009C1900 /* crypto.mp3 in CopyFiles */ = {isa = PBXBuildFile; fileRef = E987A5E12442C52B009C1900 /* crypto.mp3 */; };
+		E99E2748245A767A0098E70A /* Effects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E99E2746245A767A0098E70A /* Effects.cpp */; };
+		E99E2749245A76A50098E70A /* Effects.h in Sources */ = {isa = PBXBuildFile; fileRef = E99E2747245A767A0098E70A /* Effects.h */; };
+		E99E274B245B09310098E70A /* effects_textured.glsl in Sources */ = {isa = PBXBuildFile; fileRef = E99E274A245B09310098E70A /* effects_textured.glsl */; };
+		E99E276124674E5A0098E70A /* platformPack_item017.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E276024674E500098E70A /* platformPack_item017.png */; };
 		E99EBAD024202557006D1F1F /* font1.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = E99EBACF24202551006D1F1F /* font1.png */; };
 		E9E69924244BB34400AA66B3 /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9E69922244BB34400AA66B3 /* Menu.cpp */; };
 		E9E69929244BEB6100AA66B3 /* Menu.h in Sources */ = {isa = PBXBuildFile; fileRef = E9E69923244BB34400AA66B3 /* Menu.h */; };
@@ -93,6 +97,10 @@
 		E987A5DD2442A602009C1900 /* Level2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Level2.h; sourceTree = "<group>"; };
 		E987A5E12442C52B009C1900 /* crypto.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = crypto.mp3; sourceTree = "<group>"; };
 		E987A5E22442C53A009C1900 /* bounce.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bounce.wav; sourceTree = "<group>"; };
+		E99E2746245A767A0098E70A /* Effects.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Effects.cpp; sourceTree = "<group>"; };
+		E99E2747245A767A0098E70A /* Effects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Effects.h; sourceTree = "<group>"; };
+		E99E274A245B09310098E70A /* effects_textured.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = effects_textured.glsl; sourceTree = "<group>"; };
+		E99E276024674E500098E70A /* platformPack_item017.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = platformPack_item017.png; sourceTree = "<group>"; };
 		E99EBACF24202551006D1F1F /* font1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = font1.png; sourceTree = "<group>"; };
 		E9E69922244BB34400AA66B3 /* Menu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Menu.cpp; sourceTree = "<group>"; };
 		E9E69923244BB34400AA66B3 /* Menu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Menu.h; sourceTree = "<group>"; };
@@ -122,6 +130,7 @@
 		DBDF1B462323DE3F007CECB1 = {
 			isa = PBXGroup;
 			children = (
+				E99E274A245B09310098E70A /* effects_textured.glsl */,
 				DBDF1B512323DE3F007CECB1 /* SDLProject */,
 				DBDF1B502323DE3F007CECB1 /* Products */,
 				DBDF1B5F2323DE92007CECB1 /* Frameworks */,
@@ -149,6 +158,8 @@
 				E987A5BB244157B9009C1900 /* Map.h */,
 				E987A5BF24426253009C1900 /* Util.cpp */,
 				E987A5C4244262D5009C1900 /* Util.h */,
+				E99E2746245A767A0098E70A /* Effects.cpp */,
+				E99E2747245A767A0098E70A /* Effects.h */,
 				E987A5CA2442968C009C1900 /* Scene.cpp */,
 				E987A5CD244297A2009C1900 /* Scene.h */,
 				E9E69922244BB34400AA66B3 /* Menu.cpp */,
@@ -162,6 +173,7 @@
 				E987A5E22442C53A009C1900 /* bounce.wav */,
 				E987A5E12442C52B009C1900 /* crypto.mp3 */,
 				E99EBACF24202551006D1F1F /* font1.png */,
+				E99E276024674E500098E70A /* platformPack_item017.png */,
 				E9FBAEB3241E8DBF00B83393 /* george_0.png */,
 				E987A5BD2442550B009C1900 /* tileset.png */,
 				E9FBAEB5241E8E1700B83393 /* ctg.png */,
@@ -248,6 +260,8 @@
 				E987A5CB2442968C009C1900 /* Scene.cpp in Sources */,
 				E987A5CE244297AC009C1900 /* Scene.h in Sources */,
 				E9E69924244BB34400AA66B3 /* Menu.cpp in Sources */,
+				E99E2748245A767A0098E70A /* Effects.cpp in Sources */,
+				E99E2749245A76A50098E70A /* Effects.h in Sources */,
 				E913D92E244954D70011BC27 /* Level3.cpp in Sources */,
 				E9E69929244BEB6100AA66B3 /* Menu.h in Sources */,
 				E987A5D1244297D6009C1900 /* Level1.cpp in Sources */,
@@ -255,7 +269,9 @@
 				E987A5C5244262DD009C1900 /* Util.h in Sources */,
 				E913D930244956FF0011BC27 /* Level3.h in Sources */,
 				E987A5D324429806009C1900 /* Level1.h in Sources */,
+				E99E274B245B09310098E70A /* effects_textured.glsl in Sources */,
 				E987A5DE2442A603009C1900 /* Level2.cpp in Sources */,
+				E99E276124674E5A0098E70A /* platformPack_item017.png in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

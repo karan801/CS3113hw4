@@ -18,7 +18,7 @@
 #include "Map.h"
 #include "Util.h"
 
-enum EntityType {NONE, PLAYER, PLATFORM, ENEMY};
+enum EntityType {AIR, PLAYER, PLATFORM, ENEMY};
 enum AIType {WALKER, JUMPER, STALKER, FOLLOWER};
 enum AIState {IDLE, WALKING, JUMPING, STALKING, DEAD, FOLLOWING, LEADING};
 enum GameMode {GOING,MENU,MENUW,MENUF};

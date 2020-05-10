@@ -1,14 +1,34 @@
-//
-//  Effects.hpp
-//  SDLProject
-//
-//  Created by Karan R Ganta on 4/29/20.
-//  Copyright © 2020 ctg. All rights reserved.
-//
+#pragma once
+#define GL_SILENCE_DEPRECATION
+#ifdef _WINDOWS
+#include <GL/glew.h>
+#endif
 
-#ifndef Effects_hpp
-#define Effects_hpp
+#define GL_GLEXT_PROTOTYPES 1
+#include <vector>
+#include <math.h>
+#include <SDL.h>
+#include <SDL_opengl.h>
+#include "glm/mat4x4.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "ShaderProgram.h"
 
-#include <stdio.h>
+enum EffectType { NONE, FADEIN, FADEOUT, GROW, SHRINK, SHAKE };
 
-#endif /* Effects_hpp */
+class Effects {
+    ShaderProgram program;
+    float alpha;
+    float speed; //for all effects, changes how fast effect occurs
+    float size;
+    float timeLeft;
+    EffectType currentEffect;
+    
+public:
+    glm::vec3 viewOffset; //for shake effect
+    
+    Effects(glm::mat4 projectionMatrix, glm::mat4 viewMatrix);
+    void DrawOverlay();
+    void Start(EffectType effectType, float effectSpeed = 1.0f);
+    void Update(float deltaTime);
+    void Render();
+};

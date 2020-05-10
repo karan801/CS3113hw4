@@ -14,6 +14,7 @@
 #include "Entity.h"
 #include "Map.h"
 #include "Util.h"
+#include "Effects.h"
 #include "Scene.h"
 #include "Menu.h"
 #include "Level1.h"
@@ -50,6 +51,11 @@ SDL_Window* displayWindow;
 
 ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
+glm::mat4 uiViewMatrix, uiProjectionMatrix;
+GLuint uifontTextureID;
+GLuint heartTextureID;
+
+Effects *effects;
 
 Mix_Music *music;
 Mix_Chunk *bounce;
@@ -71,7 +77,12 @@ void Initialize() {
     
     glViewport(0, 0, 640, 480);
     
-    program.Load("shaders/vertex_textured.glsl", "shaders/fragment_textured.glsl");
+    program.Load("shaders/vertex_textured.glsl", "shaders/effects_textured.glsl");
+    
+    uifontTextureID = Util::LoadTexture("font1.png");
+    heartTextureID = Util::LoadTexture("platformPack_item017.png");
+    uiViewMatrix = glm::mat4(1.0);
+    uiProjectionMatrix = glm::ortho(-6.4f, 6.4f, -3.6f, 3.6f, -1.0f, 1.0f);
     
     viewMatrix = glm::mat4(1.0f);
     modelMatrix = glm::mat4(1.0f);
@@ -98,6 +109,9 @@ void Initialize() {
     music = Mix_LoadMUS("crypto.mp3");
     Mix_PlayMusic(music, -1);
     Mix_VolumeMusic(MIX_MAX_VOLUME/4);
+    
+    effects = new Effects(projectionMatrix, viewMatrix);
+    //effects->Start(GROW, 10.0f);
 }
 
 void ProcessInput() {
@@ -181,6 +195,8 @@ void ProcessInput() {
 #define FIXED_TIMESTEP 0.0166666f
 float lastTicks = 0;
 float accumulator = 0.0f;
+
+bool lastCollidedBottom = false;
 void Update() {
     float ticks = (float)SDL_GetTicks() / 1000.0f;
     float deltaTime = ticks - lastTicks;
@@ -198,6 +214,12 @@ void Update() {
         if (mode != MENU && mode != MENUF && mode != MENUW){
             mode = currentScene->Update(FIXED_TIMESTEP); //here are the list of platforms and the number of platforms, look at each platform and check if im colliding. get out. dont change anything/update
         }
+        if (lastCollidedBottom == false && currentScene->state.player->collidedBottom) {
+            //effects->Start(SHAKE,5.0f); //can add effect/mess with about how to shake and give the user a real feeling of playing
+        }
+        lastCollidedBottom = currentScene->state.player->collidedBottom;
+        
+        effects->Update(FIXED_TIMESTEP);
         if (mode == MENUF) {
             SwitchToScene(0);
         }
@@ -225,6 +247,8 @@ void Update() {
     else {
         viewMatrix = glm::translate(viewMatrix, glm::vec3(-5.0f, 3.75, 0));
     }
+    
+    viewMatrix = glm::translate(viewMatrix,effects->viewOffset);
 }
 
 
@@ -232,8 +256,21 @@ void Render() {
     program.SetViewMatrix(viewMatrix);
     glClear(GL_COLOR_BUFFER_BIT);
     
+    program.SetProjectionMatrix(projectionMatrix);
+    program.SetViewMatrix(viewMatrix);
+    
+    glUseProgram(program.programID);
     currentScene->Render(&program);
+    effects->Render();
     GLuint fontTextureID = Util::LoadTexture("font1.png");
+    
+    program.SetProjectionMatrix(uiProjectionMatrix);
+    program.SetViewMatrix(uiViewMatrix);
+    Util::DrawText(&program, fontTextureID, ("Lives: "+ to_string(currentScene->state.player->lives)), 0.5, -0.3f, glm::vec3(-6, 3.2, 0));
+    for (int i = 0; i < 3; i++) {
+        Util::DrawIcon(&program, heartTextureID, glm::vec3(5+(i*0.5f), 3.2, 0));
+    }
+    
     if (mode == MENUW)
         Util::DrawText(&program,fontTextureID,"Congrats! You Won. Play again?",0.2f,0.0f,glm::vec3(2.25f, -5.0f, 0.0f));
     if (mode == MENUF)

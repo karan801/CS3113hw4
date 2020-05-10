@@ -221,7 +221,7 @@ void Entity::AIStalker (Entity *player) {
 Entity Entity::findNearestFollower(Entity *enemies, int enemyCount){//unused
     float maxy = 100.0f, maxx = 100.0f;
     Entity answer = Entity();
-    answer.type = NONE;
+    answer.type = AIR;
     for (int i = 0; i < enemyCount; i++){
         float tempx = position.x-enemies[i].position.x;
         float tempy = position.y-enemies[i].position.y;
@@ -294,7 +294,7 @@ void Entity::Update(float deltaTime, Entity *player, Entity *enemies, int enemyC
             player->jump = true;
         } else if (!player->invulnerability && player->invulnerabilityCount == 0 && lastCollided == PLAYER && (collidedLeft || collidedRight || collidedBottom || collidedBottomLeft || collidedBottomRight)){
             player->lives -= 1;
-            lastCollided = NONE;
+            lastCollided = AIR;
             player->invulnerability = true;
         }
         AI(player, enemies, enemyCount);
