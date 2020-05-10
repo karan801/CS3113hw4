@@ -35,7 +35,7 @@ void Level1::Initialize() {
     state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTextureID, 1.0f, 4, 1);
     // Move over all of the player and enemy code from initialization.
     // Initialize Player
-    state.player = new Entity();
+    state.player = new Player();
     state.player->position = glm::vec3(3.0f, -3.0f, 0.0f);
     state.player->movement = glm::vec3(0);
     state.player->acceleration = glm::vec3(0, -15.0f, 0.0f);
@@ -56,11 +56,11 @@ void Level1::Initialize() {
     state.player->height = 0.8f; // to help with graphic empty edges
     state.player->width = 0.75f;
     
-    state.player->jumpPower = 7.5f;
+    //state.player->jumpPower = 7.5f;
     state.player->type = PLAYER;
     
     // Initialize Enemies
-    state.enemies = new Entity[LEVEL1_ENEMY_COUNT];
+    state.enemies = new Enemy[LEVEL1_ENEMY_COUNT];
     GLuint enemyTextureID = Util::LoadTexture("ctg.png");
     
     for (int i = 0; i < LEVEL1_ENEMY_COUNT; i++){
@@ -77,7 +77,7 @@ void Level1::Initialize() {
         state.enemies[i].acceleration = glm::vec3(0.0f, -4.0f, 0.0f);
         state.enemies[i].speed = 1;
     }
-    state.enemies[0].aiType = WALKER;
+    /*state.enemies[0].aiType = WALKER;
     state.enemies[0].aiState = IDLE;
     
     state.enemies[1].aiType = JUMPER;
@@ -85,24 +85,24 @@ void Level1::Initialize() {
     
     state.enemies[2].aiType = STALKER;
     state.enemies[2].aiState = IDLE;
-    
+    */
     // tiles
     state.map = new Map (LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTextureID, 1.0f, 4, 1);
 }
     
 GameMode Level1::Update(float deltaTime) {
-    if (state.player->lives > 0) state.player->Update(deltaTime, state.player, state.enemies, LEVEL1_ENEMY_COUNT, state.map);
+    if (state.player->health > 0) state.player->Update(deltaTime, state.player, state.enemies, LEVEL1_ENEMY_COUNT, state.map);
     for (int i = 0; i < LEVEL1_ENEMY_COUNT; i++){
         state.enemies[i].Update(deltaTime, state.player, state.enemies, LEVEL1_ENEMY_COUNT, state.map);
     }
     if (state.player->position.y < -8.0f) {
-        state.player->lives -= 1;
+        state.player->health -= 1;
         resetPosition();
     }
     if (state.player->position.x >= 25.0f) {
         state.nextScene = 2;
     }
-    if (state.player->lives <= 0) {
+    if (state.player->health <= 0) {
         state.nextScene = 0;
         return MENUF;
     }
@@ -117,6 +117,6 @@ void Level1::Render(ShaderProgram *program) {
         state.enemies[i].Render(program);
     GLuint fontTextureID = Util::LoadTexture("font1.png");
     Util::DrawText(program,fontTextureID,"Level 1",0.3f,0.0f,glm::vec3(3.0f, -7.0f, 0.0f));
-    Util::DrawText(program,fontTextureID,"Lives: "+std::to_string(state.player->lives),0.3f,0.0f,glm::vec3(3.0f, -6.0f, 0.0f));
+    Util::DrawText(program,fontTextureID,"Lives: "+std::to_string(state.player->health),0.3f,0.0f,glm::vec3(3.0f, -6.0f, 0.0f));
     Util::DrawText(program,fontTextureID,"Reach the end to advance.",0.2f,0.0f,glm::vec3(1.1f, -0.5f, 0.0f));
 }

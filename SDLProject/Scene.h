@@ -13,12 +13,14 @@
 
 #include "Util.h"
 #include "Entity.h"
+#include "Player.h"
+#include "Enemy.h"
 #include "Map.h"
 
 struct GameState {
     Map *map;
-    Entity *player;
-    Entity *enemies;
+    Player *player;
+    Enemy *enemies;
     int nextScene;
 };
 

@@ -18,55 +18,29 @@
 #include "Map.h"
 #include "Util.h"
 
-enum EntityType {AIR, PLAYER, PLATFORM, ENEMY};
-enum AIType {WALKER, JUMPER, STALKER, FOLLOWER};
-enum AIState {IDLE, WALKING, JUMPING, STALKING, DEAD, FOLLOWING, LEADING};
+enum EntityType {AIR, PLAYER, PLATFORM, ENEMY, NPC};
 enum GameMode {GOING,MENU,MENUW,MENUF};
-
 
 class Entity {
 public:
+    //==VARIABLES==
+    //movement
     glm::vec3 position;
     glm::vec3 movement;
     glm::vec3 acceleration;
     glm::vec3 velocity;
-    
-    AIType aiType;
-    AIState aiState;
-    EntityType type;
-    EntityType lastCollided;
-    
-    
-    float width = 1;
-    float height = 1; //may need to change these 2 variables as needed, otherwise fixed for now.
-    
-    bool jump = false;
-    float jumpPower = 2.0f;
-    int jumpCount = 0;
-    
     float speed;
-    
-    GLuint textureID;
     
     glm::mat4 modelMatrix;
     
-    int *animRight = NULL;
-    int *animLeft = NULL;
-    int *animUp = NULL;
-    int *animDown = NULL;
-
-    int *animIndices = NULL;
-    int animFrames = 0;
-    int animIndex = 0;
-    float animTime = 0;
-    int animCols = 0;
-    int animRows = 0;
-    
+    //active/life
+    EntityType type;
     bool isActive = true;
-    int lives = 3;
+    int health = 0;
     bool invulnerability = false;
     int invulnerabilityCount = 0;
     
+    EntityType lastCollided;
     bool collidedTop = false;
     bool collidedTopLeft = false;
     bool collidedTopRight = false;
@@ -75,23 +49,34 @@ public:
     bool collidedBottomRight = false;
     bool collidedLeft = false;
     bool collidedRight = false;
-    Entity();
+    float width = 1;
+    float height = 1; //may need to change these 2 variables as needed, otherwise fixed for now.
     
-    bool CheckCollision(Entity *other);
-    void CheckCollisionsY(Entity *objects, int objectCount);
-    void CheckCollisionsX(Entity *objects, int objectCount);
-    void CheckCollisionsX(Map *map);
-    void CheckCollisionsY(Map *map);
+    //texturing
+    GLuint textureID;
+    int *animRight = NULL;
+    int *animLeft = NULL;
+    int *animUp = NULL;
+    int *animDown = NULL;
     
-    void Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Map *map);
-    void Render(ShaderProgram *program);
-    void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index);
+    int *animIndices = NULL;
+    int animFrames = 0;
+    int animIndex = 0;
+    float animTime = 0;
+    int animCols = 0;
+    int animRows = 0;
     
-    Entity findNearestFollower(Entity *enemies, int enemyCount);
+    //==METHODS==
+    //collision functions
+    virtual bool CheckCollision(Entity *other) = 0;
+    virtual void CheckCollisionsY(Entity *objects, int objectCount) = 0;
+    virtual void CheckCollisionsX(Entity *objects, int objectCount) = 0;
+    virtual void CheckCollisionsX(Map *map) = 0;
+    virtual void CheckCollisionsY(Map *map) = 0;
     
-    void AI(Entity *player, Entity *enemies, int enemyCount);
-    void AIWalker();
-    void AIJumper(Entity *player);
-    void AIStalker(Entity *player);
-    void AIFollower(Entity *player, Entity *enemies, int enemyCount);
+    //game functions
+    virtual void Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Map *map) = 0;
+    virtual void Render(ShaderProgram *program) = 0;
+    virtual void DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID, int index) = 0;
+
 };

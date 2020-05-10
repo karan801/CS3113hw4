@@ -143,7 +143,7 @@ void ProcessInput() {
                         
                     case SDLK_UP:
                         // alternative jump
-                        currentScene->state.player->jump = true;
+                        //currentScene->state.player->jump = true;
                         break;
                         
                     case SDLK_a:
@@ -156,13 +156,13 @@ void ProcessInput() {
                         
                     case SDLK_w:
                         // alternative jump
-                        currentScene->state.player->jump = true;
+                        //currentScene->state.player->jump = true;
                         break;
                         
                     case SDLK_SPACE:
                         //if (state.player->collidedBottom) {
                         //}
-                        currentScene->state.player->jump = true;
+                        //currentScene->state.player->jump = true;
                         break;
                 }
                 break; // SDL_KEYDOWN
@@ -266,7 +266,7 @@ void Render() {
     
     program.SetProjectionMatrix(uiProjectionMatrix);
     program.SetViewMatrix(uiViewMatrix);
-    Util::DrawText(&program, fontTextureID, ("Lives: "+ to_string(currentScene->state.player->lives)), 0.5, -0.3f, glm::vec3(-6, 3.2, 0));
+    Util::DrawText(&program, fontTextureID, ("Lives: "+ to_string(currentScene->state.player->health)), 0.5, -0.3f, glm::vec3(-6, 3.2, 0));
     for (int i = 0; i < 3; i++) {
         Util::DrawIcon(&program, heartTextureID, glm::vec3(5+(i*0.5f), 3.2, 0));
     }

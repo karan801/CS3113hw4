@@ -9,13 +9,13 @@
 
 void Menu::Initialize() {
     state.nextScene = -1;
-    state.player = new Entity();
+    state.player = new Player();
     
 }
     
 GameMode Menu::Update(float deltaTime) {
     state.nextScene = 1;
-    state.player = new Entity();
+    state.player = new Player();
     return MENU;
 }
     

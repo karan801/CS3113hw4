@@ -30,8 +30,8 @@
             filePath = "SDLProject/Level2.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "Level2::Update(deltaTime)"
             landmarkType = "7">
          </BreakpointContent>
@@ -49,38 +49,6 @@
             startingLineNumber = "94"
             endingLineNumber = "94"
             landmarkName = "Level1::Update(deltaTime)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C697548D-B7BA-48B0-9C86-4BD82C763636"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SDLProject/Entity.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
-            landmarkName = "Entity::Update(deltaTime, player, enemies, enemyCount, map)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DDE62D91-B404-4B26-81AD-1989BF6F1DFD"
-            shouldBeEnabled = "No"
-            ignoreCount = "1"
-            continueAfterRunningActions = "No"
-            filePath = "SDLProject/Entity.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "296"
-            endingLineNumber = "296"
-            landmarkName = "Entity::Update(deltaTime, player, enemies, enemyCount, map)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
