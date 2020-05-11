@@ -15,8 +15,8 @@ void Menu::Initialize() {
     
 GameMode Menu::Update(float deltaTime) {
     state.nextScene = 1;
+    state.player->Update(deltaTime, state.player, NULL, 0, NULL);
     state.player->position = glm::vec3(0,0,0);
-    state.player->animIndices = state.player->animIdle;
     return MENU;
 }
     

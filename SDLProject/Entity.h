@@ -60,7 +60,13 @@ public:
     int *animLeft = NULL;
     int *animUp = NULL;
     int *animDown = NULL;
+    
     int *animIdle = NULL;
+    
+    int *animAttackRight = NULL;
+    int *animAttackLeft = NULL;
+    int *animDeathRight = NULL;
+    int *animDeathLeft = NULL;
     
     int *animIndices = NULL;
     int animFrames = 0;

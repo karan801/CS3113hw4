@@ -9,11 +9,6 @@ enum AIState {IDLE, ATTACKING, WALKING, DEAD};
 public:
     AIType aiType;
     AIState aiState;
-
-    int *animAttackRight = NULL;
-    int *animAttackLeft = NULL;
-    int *animDeathRight = NULL;
-    int *animDeathLeft = NULL;
     
     Enemy() noexcept;
     

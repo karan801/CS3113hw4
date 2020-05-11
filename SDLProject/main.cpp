@@ -113,7 +113,7 @@ void Initialize() {
 }
 
 void ProcessInput() {
-        currentScene->state.player->movement = glm::vec3(0);
+    currentScene->state.player->movement = glm::vec3(0);
     
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -168,41 +168,30 @@ void ProcessInput() {
     }
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
-    if (keys[SDL_SCANCODE_LEFT]) {
+    if (keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_A]) {
         currentScene->state.player->movement.x += -1.5f;
         currentScene->state.player->animIndices = currentScene->state.player->animLeft;
     }
-    else if (keys[SDL_SCANCODE_RIGHT]) {
+    else if (keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D]) {
         currentScene->state.player->movement.x += 1.5f;
         currentScene->state.player->animIndices = currentScene->state.player->animRight;
     }
-    if (keys[SDL_SCANCODE_A]) {
-        currentScene->state.player->movement.x += -1.5f;
-        currentScene->state.player->animIndices = currentScene->state.player->animLeft;
-    }
-    else if (keys[SDL_SCANCODE_D]) {
-        currentScene->state.player->movement.x += 1.5f;
-        currentScene->state.player->animIndices = currentScene->state.player->animRight;
-    }
-    if (keys[SDL_SCANCODE_DOWN]) {
+    if (keys[SDL_SCANCODE_DOWN] || keys[SDL_SCANCODE_S]) {
         currentScene->state.player->movement.y += -1.5f;
-        //currentScene->state.player->animIndices = currentScene->state.player->animDown;
+        if (glm::length(currentScene->state.player->movement.x) == 0) currentScene->state.player->animIndices = currentScene->state.player->animLeft;
     }
-    else if (keys[SDL_SCANCODE_UP]) {
+    else if (keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_W]) {
         currentScene->state.player->movement.y += 1.5f;
-        //currentScene->state.player->animIndices = currentScene->state.player->animUp;
+        if (glm::length(currentScene->state.player->movement.x) == 0)
+            currentScene->state.player->animIndices = currentScene->state.player->animRight;
     }
-    if (keys[SDL_SCANCODE_S]) {
-        currentScene->state.player->movement.y += -1.5f;
-        //currentScene->state.player->animIndices = currentScene->state.player->animDown;
-    }
-    else if (keys[SDL_SCANCODE_W]) {
-        currentScene->state.player->movement.y += 1.5f;
-        //currentScene->state.player->animIndices = currentScene->state.player->animUp;
-    }
-
+    
     if (glm::length(currentScene->state.player->movement) > 1.5f) {
         currentScene->state.player->movement = glm::normalize(currentScene->state.player->movement);
+    }
+    if (glm::length(currentScene->state.player->movement) == 0) {
+        currentScene->state.player->animIndices = currentScene->state.player->animIdle;
+        currentScene->state.player->animIndex = 0;
     }
 }
 
@@ -314,7 +303,11 @@ int main(int argc, char* argv[]) {
         if (currentScene->state.nextScene == 3) {
             mode = MENUW;
             SwitchToScene(0);
-        } else if (currentScene->state.nextScene > 0) {
+        } else if (currentScene == sceneList[2] && currentScene->state.nextScene == 1){
+            SwitchToScene(currentScene->state.nextScene);
+            currentScene->state.player->position = glm::vec3(4.0f, -8.0f, 0.0f);
+        }
+        else if (currentScene->state.nextScene > 0) {
             SwitchToScene(currentScene->state.nextScene);
         }
         Render();

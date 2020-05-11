@@ -13,14 +13,12 @@ Player::Player() noexcept
     
     type = PLAYER;
     
-    
-    
     textureID = Util::LoadTexture("maleadventurer.png");
-    animIdle = new int[1] {2};
-    animRight = new int[5] {16, 17, 18, 19, 20};
-    animLeft = new int[5] {120, 121, 122, 123, 124};
+    animIdle = new int[13] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    animRight = new int[8] {13, 14, 15, 16, 17, 18, 19, 20};
+    animLeft = new int[8] {117, 118, 119, 120, 121, 122, 123, 124};
     animAttackRight = new int[8] {27, 28, 29, 30, 31, 32, 33, 34};
-    animAttackLeft = new int[8] {144,145,146,147,148,149,150,151};
+    animAttackLeft = new int[8] {132, 133,134,135,136,137,138,139};
     animDeathRight = new int[2] {97, 98};
     animDeathLeft = new int[2] {202, 203};
 
@@ -37,6 +35,8 @@ Player::Player() noexcept
     //int animIndex = index of what we want to draw
     //animtime adds deltatime, then after some time passes, it adds the next index and then sets it back to 0 when we've exceeded frames
     //changing animtime can make things so much quicker and produce different effects (e.g. walking vs running)
+
+
 }
 
 bool Player::CheckCollision(Entity *other) {
@@ -170,11 +170,6 @@ void Player::CheckCollisionsX(Map *map) {
 void Player::Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Map *map)
 {
     
-    if (invulnerability && player->invulnerabilityCount == 0 && lastCollided == ENEMY && (collidedLeft || collidedRight || collidedBottom || collidedBottomLeft || collidedBottomRight)){
-            player->health -= 1;
-            lastCollided = AIR;
-            player->invulnerability = true;
-    }
     if (type == PLAYER && invulnerability) {
         invulnerabilityCount++;
         if (invulnerabilityCount > 300) {
@@ -206,11 +201,13 @@ void Player::Update(float deltaTime, Entity *player, Entity *enemies, int enemyC
                 }
             }
         } else {
-            //animIndices = new int[1] {};
+            //animIndices = animIdle;
             animIndex = 0;
         }
-    } else
+    } else {
         animIndices = animIdle;
+        animIndex = 0;
+    }
     /*
     if (jump) { //instant VELOCTIY!
         jump = false;
@@ -271,7 +268,7 @@ void Player::DrawSpriteFromTextureAtlas(ShaderProgram *program, GLuint textureID
 }
 
 void Player::Render(ShaderProgram *program) {
-    if (isActive == false && type != PLATFORM) return;
+    if (isActive == false) return;
     if (type == PLAYER && invulnerability && invulnerabilityCount%2)
         program->SetModelMatrix(modelMatrix);
     else if (type == PLAYER && invulnerability)
@@ -282,6 +279,9 @@ void Player::Render(ShaderProgram *program) {
     if (animIndices != NULL) {
         DrawSpriteFromTextureAtlas(program, textureID, animIndices[animIndex]);
         return;
+    } else {
+        animIndices = animIdle;
+        DrawSpriteFromTextureAtlas(program, textureID, animIndices[animIndex]);
     }
     
     float vertices[]  = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
