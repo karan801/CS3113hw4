@@ -17,9 +17,8 @@
 #include "Effects.h"
 #include "Scene.h"
 #include "Menu.h"
-#include "Level1.h"
-#include "Level2.h"
-#include "Level3.h"
+#include "Tent.h"
+#include "Forest.h"
 
 #include <vector>
 #include <iostream>
@@ -43,7 +42,7 @@ using namespace std;
 //===================
 
 Scene *currentScene;
-Scene *sceneList[4];
+Scene *sceneList[3];
 GameMode mode = MENU;
 bool gameIsRunning = true;
 
@@ -53,7 +52,7 @@ ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 glm::mat4 uiViewMatrix, uiProjectionMatrix;
 GLuint uifontTextureID;
-GLuint heartTextureID;
+//GLuint heartTextureID;
 
 Effects *effects;
 
@@ -67,7 +66,7 @@ void SwitchToScene(int sceneNum) {
 
 void Initialize() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    displayWindow = SDL_CreateWindow("Karan's (Kind-of) First Game!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
+    displayWindow = SDL_CreateWindow("The Snake Warrior!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
     SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
     SDL_GL_MakeCurrent(displayWindow, context);
     
@@ -79,8 +78,8 @@ void Initialize() {
     
     program.Load("shaders/vertex_textured.glsl", "shaders/effects_textured.glsl");
     
-    uifontTextureID = Util::LoadTexture("font1.png");
-    heartTextureID = Util::LoadTexture("platformPack_item017.png");
+    uifontTextureID = Util::LoadTexture("pixel_font.png");
+    //heartTextureID = Util::LoadTexture("platformPack_item017.png");
     uiViewMatrix = glm::mat4(1.0);
     uiProjectionMatrix = glm::ortho(-6.4f, 6.4f, -3.6f, 3.6f, -1.0f, 1.0f);
     
@@ -101,9 +100,8 @@ void Initialize() {
    
     // Initialize Game Objects
     sceneList[0] = new Menu();
-    sceneList[1] = new Level1();
-    sceneList[2] = new Level2();
-    sceneList[3] = new Level3();
+    sceneList[1] = new Tent();
+    sceneList[2] = new Forest();
     SwitchToScene(0);
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
     music = Mix_LoadMUS("crypto.mp3");
@@ -186,6 +184,22 @@ void ProcessInput() {
         currentScene->state.player->movement.x += 1.5f;
         currentScene->state.player->animIndices = currentScene->state.player->animRight;
     }
+    if (keys[SDL_SCANCODE_DOWN]) {
+        currentScene->state.player->movement.y += -1.5f;
+        //currentScene->state.player->animIndices = currentScene->state.player->animDown;
+    }
+    else if (keys[SDL_SCANCODE_UP]) {
+        currentScene->state.player->movement.y += 1.5f;
+        //currentScene->state.player->animIndices = currentScene->state.player->animUp;
+    }
+    if (keys[SDL_SCANCODE_S]) {
+        currentScene->state.player->movement.y += -1.5f;
+        //currentScene->state.player->animIndices = currentScene->state.player->animDown;
+    }
+    else if (keys[SDL_SCANCODE_W]) {
+        currentScene->state.player->movement.y += 1.5f;
+        //currentScene->state.player->animIndices = currentScene->state.player->animUp;
+    }
 
     if (glm::length(currentScene->state.player->movement) > 1.5f) {
         currentScene->state.player->movement = glm::normalize(currentScene->state.player->movement);
@@ -207,12 +221,10 @@ void Update() {
         accumulator = deltaTime;
         return;
     }
-    /*if (currentScene->state.flag == GOING) {
-        currentScene->jumpCount++;*/
+    
     while (deltaTime >= FIXED_TIMESTEP) {
-    // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
         if (mode != MENU && mode != MENUF && mode != MENUW){
-            mode = currentScene->Update(FIXED_TIMESTEP); //here are the list of platforms and the number of platforms, look at each platform and check if im colliding. get out. dont change anything/update
+            mode = currentScene->Update(FIXED_TIMESTEP);
         }
         if (lastCollidedBottom == false && currentScene->state.player->collidedBottom) {
             //effects->Start(SHAKE,5.0f); //can add effect/mess with about how to shake and give the user a real feeling of playing
@@ -224,30 +236,38 @@ void Update() {
             SwitchToScene(0);
         }
         deltaTime -= FIXED_TIMESTEP;
-        /*
-        for (int i = 0; i < ENEMY_COUNT; i++){
-            if (jumpCount/40 > 1 && state.enemies[i].aiType == JUMPER) {
-                state.enemies[i].jump = true;
-                jumpCount = 0;
-            }
-            state.flag = state.enemies[i].Update(FIXED_TIMESTEP, state.player, state.enemies, ENEMY_COUNT, state.platforms, PLATFORM_COUNT);
-            if (state.flag == SUCCESS || state.flag == FAILURE)
-                break;
-        }*/
-        //state.flag = state.player->Update(FIXED_TIMESTEP, state.solution, SOLUTION_COUNT);
     }
     accumulator = deltaTime;
     
     
     viewMatrix = glm::mat4(1.0f);
-    if (5 < currentScene->state.player->position.x && currentScene->state.player->position.x < 25) {
-        viewMatrix = glm::translate(viewMatrix, glm::vec3(-currentScene->state.player->position.x, 3.75f, 0));
-    } else if (currentScene->state.player->position.x >= 25)
-        viewMatrix = glm::translate(viewMatrix, glm::vec3(25.0f, 3.75, 0));
-    else {
-        viewMatrix = glm::translate(viewMatrix, glm::vec3(-5.0f, 3.75, 0));
+    if (currentScene == sceneList[1]) { //for tent base level
+        if (currentScene->state.player->position.x > 5.0f && currentScene->state.player->position.x < 10.0f) //normal view
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(-currentScene->state.player->position.x, 0, 0));
+        else if (currentScene->state.player->position.x < 5.0f) //left view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(-5.0f, 0, 0));
+        else if (currentScene->state.player->position.x > 10.0f)//right view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(-10.0f, 0, 0));
+        if (currentScene->state.player->position.y > -7.0f && currentScene->state.player->position.y < -4.0f) //normal view
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(0, -currentScene->state.player->position.y, 0));
+        else if (currentScene->state.player->position.y < -4.0f) //top view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(0, 7.0f, 0));
+        else if (currentScene->state.player->position.y > -7.0f)//bottom view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(0, 4.0f, 0));
+    } else if (currentScene == sceneList[2]) { //for forest level
+        if (currentScene->state.player->position.x > 5.0f && currentScene->state.player->position.x < 10.0f) //normal view
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(-currentScene->state.player->position.x, 0, 0));
+        else if (currentScene->state.player->position.x < 5.0f) //left view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(-5.0f, 0, 0));
+        else if (currentScene->state.player->position.x > 10.0f)//right view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(-10.0f, 0, 0));
+        if (currentScene->state.player->position.y > -13.0f && currentScene->state.player->position.y < -4.0f) //normal view
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(0, -currentScene->state.player->position.y, 0));
+        else if (currentScene->state.player->position.y < -4.0f) //top view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(0, 13.0f, 0));
+        else if (currentScene->state.player->position.y > -13.0f)//bottom view wall
+            viewMatrix = glm::translate(viewMatrix,glm::vec3(0, 4.0f, 0));
     }
-    
     viewMatrix = glm::translate(viewMatrix,effects->viewOffset);
 }
 
@@ -262,30 +282,19 @@ void Render() {
     glUseProgram(program.programID);
     currentScene->Render(&program);
     effects->Render();
-    GLuint fontTextureID = Util::LoadTexture("font1.png");
+    GLuint fontTextureID = Util::LoadTexture("pixel_font.png");
     
     program.SetProjectionMatrix(uiProjectionMatrix);
     program.SetViewMatrix(uiViewMatrix);
-    Util::DrawText(&program, fontTextureID, ("Lives: "+ to_string(currentScene->state.player->health)), 0.5, -0.3f, glm::vec3(-6, 3.2, 0));
-    for (int i = 0; i < 3; i++) {
-        Util::DrawIcon(&program, heartTextureID, glm::vec3(5+(i*0.5f), 3.2, 0));
-    }
+    Util::DrawText(&program, fontTextureID, ("Lives: "+ to_string(currentScene->state.player->health)), 0.1f,0.1f, glm::vec3(-6, 3.2, 0));
+    //for (int i = 0; i < 3; i++) {
+        //Util::DrawIcon(&program, heartTextureID, glm::vec3(5+(i*0.5f), 3.2, 0));
+    //}
     
     if (mode == MENUW)
-        Util::DrawText(&program,fontTextureID,"Congrats! You Won. Play again?",0.2f,0.0f,glm::vec3(2.25f, -5.0f, 0.0f));
+        Util::DrawText(&program,fontTextureID,"Congrats! You Won. Play again?",0.1f,0.1f,glm::vec3(2.25f, -5.0f, 0.0f));
     if (mode == MENUF)
-        Util::DrawText(&program,fontTextureID,"Failure. You lost. Play again?",0.2f,0.0f,glm::vec3(2.25f, -5.0f, 0.0f));
-    //currentScene->state.map->Render(&program);
-    //for (int i = 0; i < ENEMY_COUNT; i++) {
-        //state.enemies[i].Render(&program);
-    //}
-    /*GLuint fontTextureID = Util::LoadTexture("font1.png");
-    DrawText(&program,fontTextureID,"Jump on their heads to win!",0.3f,0.0f,glm::vec3(-4.25f, 3.5f, 0.0f));
-    if (currentScene->state.flag == FAILURE) {
-        DrawText(&program,fontTextureID,"FAILURE.",1.0f,0.0f,glm::vec3(-3.5f, 0.0f, 0.0f));
-    } else if (currentScene->state.flag == SUCCESS) {
-        DrawText(&program,fontTextureID,"SUCCESS!",1.0f,0.0f,glm::vec3(-3.5f, 0.0f, 0.0f));
-    }*/
+        Util::DrawText(&program,fontTextureID,"Failure. You lost. Play again?",0.1f,0.1f,glm::vec3(2.25f, -5.0f, 0.0f));
     
     SDL_GL_SwapWindow(displayWindow);
 }
@@ -302,7 +311,7 @@ int main(int argc, char* argv[]) {
         ProcessInput();
         Update();
         
-        if (currentScene->state.nextScene == 4) {
+        if (currentScene->state.nextScene == 3) {
             mode = MENUW;
             SwitchToScene(0);
         } else if (currentScene->state.nextScene > 0) {

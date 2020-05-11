@@ -4,6 +4,11 @@ class Player : public Entity {
     
 public:
     
+    int *animAttackRight = NULL;
+    int *animAttackLeft = NULL;
+    int *animDeathRight = NULL;
+    int *animDeathLeft = NULL;
+    
     Player() noexcept;
     
     bool CheckCollision(Entity *other) override;

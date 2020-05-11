@@ -40,6 +40,8 @@ public:
     bool invulnerability = false;
     int invulnerabilityCount = 0;
     
+    bool attack = false;
+    
     EntityType lastCollided;
     bool collidedTop = false;
     bool collidedTopLeft = false;
@@ -58,6 +60,7 @@ public:
     int *animLeft = NULL;
     int *animUp = NULL;
     int *animDown = NULL;
+    int *animIdle = NULL;
     
     int *animIndices = NULL;
     int animFrames = 0;

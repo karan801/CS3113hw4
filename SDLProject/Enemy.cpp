@@ -11,8 +11,32 @@ Enemy::Enemy() noexcept
     modelMatrix = glm::mat4(1.0f);
     
     type = ENEMY;
-    aiType = JUMPER;
     aiState = IDLE;
+    aiType = COBRA;
+    
+    textureID = Util::LoadTexture("Cobra.png");
+    animIdle = new int[1] {0};
+    animRight = new int[8] {8, 9, 10, 11, 12, 13, 14, 15};
+    animLeft = new int[8] {55, 54, 53, 52, 51, 50, 49, 48};
+    animAttackRight = new int[6] {16, 17, 18, 19, 20, 21};
+    animAttackLeft = new int[6] {63, 62, 61, 60, 59, 58};
+    animDeathRight = new int[6] {32, 33, 34, 35, 36, 37};
+    animDeathLeft = new int[6] {79, 78, 77, 76, 75, 74};
+
+    animIndices = animDown;
+    animFrames = 0;
+    animIndex = 0;
+    animTime = 0;
+    animCols = 8;
+    animRows = 10;
+    height = 0.1f;
+    width = 0.35f;
+    //int *animIndices = list of indices of sprites in texture atlas (animRight/left/up/down for different directions/movements)
+    //int animFrames = number of frames
+    //int animIndex = index of what we want to draw
+    //animtime adds deltatime, then after some time passes, it adds the next index and then sets it back to 0 when we've exceeded frames
+    //changing animtime can make things so much quicker and produce different effects (e.g. walking vs running)
+    
 }
 
 bool Enemy::CheckCollision(Entity *other) {
@@ -143,16 +167,12 @@ void Enemy::CheckCollisionsX(Map *map) {
     }
 }
 
-void Enemy::AIWalker () {
-    movement = glm::vec3(-1.0f,0.0f,0.0f);
-}
-
-void Enemy::AIJumper (Entity *player) {
+void Enemy::AISnake (Entity *player) {
     switch (aiState)
     {
         case IDLE: //starts in IDLE
             //jump = true;
-            if (glm::distance(position, player->position) <5.0f) {
+            if (glm::distance(position, player->position) <3.0f) {
                 aiState = WALKING;
             }
             break;
@@ -162,91 +182,33 @@ void Enemy::AIJumper (Entity *player) {
             } else {
                 movement = glm::vec3(1.0f,0.0f,0.0f);
             }
-            aiState=JUMPING;
+            if (player->position.y < position.y) {
+                movement = glm::vec3(0.0f,-1.0f,0.0f);
+            } else {
+                movement = glm::vec3(0.0f,1.0f,0.0f);
+            }
+            if (fabs(player->position.x-position.x < 1.0f) || fabs(player->position.y-position.y) < 1.0f) {
+                aiState=ATTACKING;
+                attack = true;
+            }
             break;
-        case JUMPING:
-            /*if (jumpCount/40 > 1) {
-                jump = true;
-                jumpCount = 0;
-            }*/
-            if (player->position.x < position.x) {
+        case ATTACKING:
+            if (player->position.x <= position.x) {
                 movement = glm::vec3(-1.0f,0.0f,0.0f);
+                animIndices = animAttackLeft;
+                speed = 2.0f;
             } else {
                 movement = glm::vec3(1.0f,0.0f,0.0f);
+                animIndices = animAttackRight;
+                speed = 2.0f;
             }
-            aiState = WALKING;
-            break;
-        case DEAD:
-            isActive = false;
-            return;
-            break;
-    }
-}
-
-void Enemy::AIStalker (Entity *player) {
-    //elapsed_time = difftime(start,elapsed_time);
-    switch (aiState)
-    {
-        case IDLE: //starts in IDLE
-            if (glm::distance(position, player->position) >1.0f)
-                aiState=WALKING;
-            break;
-        case WALKING:
-            if (glm::distance(position, player->position) >1.0f)
-            {
-                if (player->position.x < position.x) {
-                    movement = glm::vec3(-1.0f,0.0f,0.0f);
-                } else {
-                    movement = glm::vec3(1.0f,0.0f,0.0f);
-                }
-            } else
-                aiState=WALKING;
-            break;
-        case STALKING:
-            if (glm::distance(position, player->position) <1.0f && glm::distance(position, player->position) > 0.001f)
-            {
-                if (player->position.x < position.x) {
-                    movement = glm::vec3(1.0f,0.0f,0.0f);
-                } else {
-                    movement = glm::vec3(-1.0f,0.0f,0.0f);
-                }
+            if (player->position.y < position.y) {
+                movement = glm::vec3(0.0f,-1.0f,0.0f);
+            } else {
+                movement = glm::vec3(0.0f,1.0f,0.0f);
             }
-            else
+            if (fabs(player->position.x-position.x > 1.0f) || fabs(player->position.y-position.y) > 1.0f)
                 aiState = WALKING;
-            break;
-        case DEAD:
-            isActive = false;
-            return;
-            break;
-    }
-}
-
-
-void Enemy::AIFollower(Entity *player, Entity *enemies, int enemyCount){//unused
-    switch (aiState)
-    {
-        case LEADING:
-            break;
-        case FOLLOWING:
-            if (player->position.x < position.x) {
-                movement = glm::vec3(-1.0f,0.0f,0.0f);
-            } else {
-                movement = glm::vec3(1.0f,0.0f,0.0f);
-            }
-            if (player->position.y < position.y)
-                aiState = JUMPING;
-            break;
-        case JUMPING:
-            /*if (jumpCount/40 > 1) {
-                jump = true;
-                jumpCount = 0;
-            }*/
-            if (player->position.x < position.x) {
-                movement = glm::vec3(-3.0f,0.0f,0.0f);
-            } else {
-                movement = glm::vec3(3.0f,0.0f,0.0f);
-            }
-            aiState = WALKING;
             break;
         case DEAD:
             isActive = false;
@@ -258,18 +220,9 @@ void Enemy::AIFollower(Entity *player, Entity *enemies, int enemyCount){//unused
 void Enemy::AI(Entity *player, Entity *enemies, int enemyCount) {
     if (!isActive) return;
     switch(aiType) {
-        case WALKER:
-            AIWalker();
+        case COBRA:
+            AISnake(player);
             break;
-        case JUMPER:
-            //jumpPower = 2.0f;
-            AIJumper(player);
-            break;
-        case STALKER:
-            AIStalker(player);
-            break;
-        case FOLLOWER://unused
-            AIFollower(player, enemies, enemyCount);
     }
 }
 
@@ -301,6 +254,7 @@ void Enemy::Update(float deltaTime, Entity *player, Entity *enemies, int enemyCo
     collidedRight = false;
     
     if (animIndices != NULL) {
+        animFrames = sizeof(animIndices);
         if (glm::length(movement) != 0) {
             animTime += deltaTime;
 
@@ -316,7 +270,8 @@ void Enemy::Update(float deltaTime, Entity *player, Entity *enemies, int enemyCo
         } else {
             animIndex = 0;
         }
-    }
+    } else
+           animIndices = animIdle;
     
     /*if (jump) { //instant VELOCTIY!
         jump = false;

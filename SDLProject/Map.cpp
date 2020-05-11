@@ -90,7 +90,8 @@ bool Map::IsSolid(glm::vec3 position, float *penetration_x, float *penetration_y
     if (tile_y < 0 || tile_y >= height) return false;
     
     int tile = levelData[tile_y * width + tile_x];
-    if (tile == 0) return false;
+    //list of nonsolid blocks: 0-59, 163 on "Forest Tileset.png"
+    if (tile <= 59 || tile == 163) return false;
     
     float tile_center_x = (tile_x * tile_size);
     float tile_center_y = -(tile_y * tile_size);

@@ -12,12 +12,15 @@
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
+#include "Util.h"
 
-#ifndef Map_hpp
-#define Map_hpp
+#ifndef Map_h
+#define Map_h
 
 #include <vector>
 #include <stdio.h>
+
+//enum MapType {FOREST, DUNGEON};
 
 class Map {
     int width;
@@ -41,4 +44,4 @@ public:
     bool IsSolid(glm::vec3 position, float *penetration_x, float *penetration_y);
 };
 
-#endif /* Map_hpp */
+#endif /* Map_h */

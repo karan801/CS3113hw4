@@ -3,13 +3,18 @@
 class Enemy : public Entity {
     
 
-enum AIType {WALKER, JUMPER, STALKER, FOLLOWER};
-enum AIState {IDLE, WALKING, JUMPING, STALKING, DEAD, FOLLOWING, LEADING};
+enum AIType {COBRA};
+enum AIState {IDLE, ATTACKING, WALKING, DEAD};
 
 public:
     AIType aiType;
     AIState aiState;
 
+    int *animAttackRight = NULL;
+    int *animAttackLeft = NULL;
+    int *animDeathRight = NULL;
+    int *animDeathLeft = NULL;
+    
     Enemy() noexcept;
     
     //collisions
@@ -26,8 +31,5 @@ public:
     
     //AI
     void AI(Entity *player, Entity *enemies, int enemyCount);
-    void AIWalker();
-    void AIJumper(Entity *player);
-    void AIStalker(Entity *player);
-    void AIFollower(Entity *player, Entity *enemies, int enemyCount);
+    void AISnake(Entity *player);
 };

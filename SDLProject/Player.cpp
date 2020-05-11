@@ -2,16 +2,41 @@
 
 Player::Player() noexcept
 {
-    position = glm::vec3(0); //coords
+    position = glm::vec3(3.0f, -3.0f, 0.0f); //coords
     movement = glm::vec3(0); //direction of moving
     acceleration = glm::vec3(0); //how fast speed increases
     velocity = glm::vec3(0); //how fast the entity is going
-    speed = 0; // a scalar of how fast the entity is going
+    speed = 5.0f; // a scalar of how fast the entity is going
     
     health = 3;
     modelMatrix = glm::mat4(1.0f);
     
     type = PLAYER;
+    
+    
+    
+    textureID = Util::LoadTexture("maleadventurer.png");
+    animIdle = new int[1] {2};
+    animRight = new int[5] {16, 17, 18, 19, 20};
+    animLeft = new int[5] {120, 121, 122, 123, 124};
+    animAttackRight = new int[8] {27, 28, 29, 30, 31, 32, 33, 34};
+    animAttackLeft = new int[8] {144,145,146,147,148,149,150,151};
+    animDeathRight = new int[2] {97, 98};
+    animDeathLeft = new int[2] {202, 203};
+
+    animIndices = animDown;
+    animFrames = 4;
+    animIndex = 3;
+    animTime = 0;
+    animCols = 13;
+    animRows = 16;
+    height = 0.4f;
+    width = 0.35f;
+    //int *animIndices = list of indices of sprites in texture atlas (animRight/left/up/down for different directions/movements)
+    //int animFrames = number of frames
+    //int animIndex = index of what we want to draw
+    //animtime adds deltatime, then after some time passes, it adds the next index and then sets it back to 0 when we've exceeded frames
+    //changing animtime can make things so much quicker and produce different effects (e.g. walking vs running)
 }
 
 bool Player::CheckCollision(Entity *other) {
@@ -167,6 +192,7 @@ void Player::Update(float deltaTime, Entity *player, Entity *enemies, int enemyC
     collidedRight = false;
     
     if (animIndices != NULL) {
+        animFrames = sizeof(animIndices);
         if (glm::length(movement) != 0) {
             animTime += deltaTime;
 
@@ -180,9 +206,11 @@ void Player::Update(float deltaTime, Entity *player, Entity *enemies, int enemyC
                 }
             }
         } else {
+            //animIndices = new int[1] {};
             animIndex = 0;
         }
-    }
+    } else
+        animIndices = animIdle;
     /*
     if (jump) { //instant VELOCTIY!
         jump = false;
@@ -195,6 +223,7 @@ void Player::Update(float deltaTime, Entity *player, Entity *enemies, int enemyC
     }*/
     
     velocity.x = movement.x * speed; //if the player is tryna move, let them move
+    velocity.y = movement.y * speed;
     velocity += acceleration * deltaTime; //changes velocity in relation to time
     
     position.y += velocity.y * deltaTime; // Move on Y
