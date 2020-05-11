@@ -16,6 +16,8 @@
 		DBDF1B6A2323DEEA007CECB1 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBDF1B672323DEEA007CECB1 /* SDL2_image.framework */; };
 		DBDF1B6B2323DEEA007CECB1 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBDF1B682323DEEA007CECB1 /* SDL2_mixer.framework */; };
 		E94E004D2468F9B50081399D /* Cobra.png in Sources */ = {isa = PBXBuildFile; fileRef = E94E004C2468F9AE0081399D /* Cobra.png */; };
+		E94E00572469FA120081399D /* fretless.mp3 in Sources */ = {isa = PBXBuildFile; fileRef = E94E00562469F9EC0081399D /* fretless.mp3 */; };
+		E94E00582469FA1A0081399D /* Snake Strike 01.wav in Sources */ = {isa = PBXBuildFile; fileRef = E94E00552469F6650081399D /* Snake Strike 01.wav */; };
 		E987A5BC244157B9009C1900 /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E987A5BA244157B9009C1900 /* Map.cpp */; };
 		E987A5C124426253009C1900 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E987A5BF24426253009C1900 /* Util.cpp */; };
 		E987A5C5244262DD009C1900 /* Util.h in Sources */ = {isa = PBXBuildFile; fileRef = E987A5C4244262D5009C1900 /* Util.h */; };
@@ -23,9 +25,9 @@
 		E987A5CE244297AC009C1900 /* Scene.h in Sources */ = {isa = PBXBuildFile; fileRef = E987A5CD244297A2009C1900 /* Scene.h */; };
 		E987A5D1244297D6009C1900 /* Tent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E987A5CF244297D6009C1900 /* Tent.cpp */; };
 		E987A5D324429806009C1900 /* Tent.h in Sources */ = {isa = PBXBuildFile; fileRef = E987A5D2244297F3009C1900 /* Tent.h */; };
-		E987A5DE2442A603009C1900 /* Forest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E987A5DC2442A602009C1900 /* Forest.cpp */; };
-		E987A5DF2442A60A009C1900 /* Forest.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E987A5DD2442A602009C1900 /* Forest.h */; };
-		E987A5E02442A60C009C1900 /* Forest.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = E987A5DC2442A602009C1900 /* Forest.cpp */; };
+		E987A5DE2442A603009C1900 /* SnakePit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E987A5DC2442A602009C1900 /* SnakePit.cpp */; };
+		E987A5DF2442A60A009C1900 /* SnakePit.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E987A5DD2442A602009C1900 /* SnakePit.h */; };
+		E987A5E02442A60C009C1900 /* SnakePit.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = E987A5DC2442A602009C1900 /* SnakePit.cpp */; };
 		E99E2748245A767A0098E70A /* Effects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E99E2746245A767A0098E70A /* Effects.cpp */; };
 		E99E2749245A76A50098E70A /* Effects.h in Sources */ = {isa = PBXBuildFile; fileRef = E99E2747245A767A0098E70A /* Effects.h */; };
 		E99E276424679AB40098E70A /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E99E276224679AB40098E70A /* Player.cpp */; };
@@ -33,12 +35,10 @@
 		E99E276824679B150098E70A /* Enemy.h in Sources */ = {isa = PBXBuildFile; fileRef = E99E276624679AC50098E70A /* Enemy.h */; };
 		E99E276924679B180098E70A /* Player.h in Sources */ = {isa = PBXBuildFile; fileRef = E99E276324679AB40098E70A /* Player.h */; };
 		E99E277324688B040098E70A /* pixel_font.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E2772246887B50098E70A /* pixel_font.png */; };
-		E99E277524688B090098E70A /* Squirrel.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E2770246874C40098E70A /* Squirrel.png */; };
 		E99E277624688B0B0098E70A /* femaleadventurer.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E276A246874730098E70A /* femaleadventurer.png */; };
 		E99E277724688B0D0098E70A /* femaleadventurerreverse.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E2771246883900098E70A /* femaleadventurerreverse.png */; };
 		E99E277824688B110098E70A /* Pig.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E276F246874B70098E70A /* Pig.png */; };
 		E99E277924688B140098E70A /* maleadventurer.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E276B2468747F0098E70A /* maleadventurer.png */; };
-		E99E277A24688B170098E70A /* Arena Tileset.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E276D2468749A0098E70A /* Arena Tileset.png */; };
 		E99E277B24688B1A0098E70A /* Forest Tileset.png in Sources */ = {isa = PBXBuildFile; fileRef = E99E276E246874A50098E70A /* Forest Tileset.png */; };
 		E9E69924244BB34400AA66B3 /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9E69922244BB34400AA66B3 /* Menu.cpp */; };
 		E9E69929244BEB6100AA66B3 /* Menu.h in Sources */ = {isa = PBXBuildFile; fileRef = E9E69923244BB34400AA66B3 /* Menu.h */; };
@@ -59,8 +59,8 @@
 				E9FBAEB0241E8CFC00B83393 /* main.cpp in CopyFiles */,
 				E9FBAEB1241E8CFE00B83393 /* Entity.cpp in CopyFiles */,
 				E9FBAEB2241E8D0100B83393 /* Entity.h in CopyFiles */,
-				E987A5DF2442A60A009C1900 /* Forest.h in CopyFiles */,
-				E987A5E02442A60C009C1900 /* Forest.cpp in CopyFiles */,
+				E987A5DF2442A60A009C1900 /* SnakePit.h in CopyFiles */,
+				E987A5E02442A60C009C1900 /* SnakePit.cpp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,6 +80,8 @@
 		DBDF1B672323DEEA007CECB1 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
 		DBDF1B682323DEEA007CECB1 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		E94E004C2468F9AE0081399D /* Cobra.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Cobra.png; sourceTree = "<group>"; };
+		E94E00552469F6650081399D /* Snake Strike 01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Snake Strike 01.wav"; sourceTree = "<group>"; };
+		E94E00562469F9EC0081399D /* fretless.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fretless.mp3; sourceTree = "<group>"; };
 		E987A5BA244157B9009C1900 /* Map.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
 		E987A5BB244157B9009C1900 /* Map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		E987A5BF24426253009C1900 /* Util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
@@ -88,8 +90,8 @@
 		E987A5CD244297A2009C1900 /* Scene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		E987A5CF244297D6009C1900 /* Tent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tent.cpp; sourceTree = "<group>"; };
 		E987A5D2244297F3009C1900 /* Tent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tent.h; sourceTree = "<group>"; };
-		E987A5DC2442A602009C1900 /* Forest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Forest.cpp; sourceTree = "<group>"; };
-		E987A5DD2442A602009C1900 /* Forest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forest.h; sourceTree = "<group>"; };
+		E987A5DC2442A602009C1900 /* SnakePit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnakePit.cpp; sourceTree = "<group>"; };
+		E987A5DD2442A602009C1900 /* SnakePit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnakePit.h; sourceTree = "<group>"; };
 		E99E2746245A767A0098E70A /* Effects.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Effects.cpp; sourceTree = "<group>"; };
 		E99E2747245A767A0098E70A /* Effects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Effects.h; sourceTree = "<group>"; };
 		E99E276224679AB40098E70A /* Player.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
@@ -98,10 +100,8 @@
 		E99E276624679AC50098E70A /* Enemy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Enemy.h; sourceTree = "<group>"; };
 		E99E276A246874730098E70A /* femaleadventurer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = femaleadventurer.png; sourceTree = "<group>"; };
 		E99E276B2468747F0098E70A /* maleadventurer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = maleadventurer.png; sourceTree = "<group>"; };
-		E99E276D2468749A0098E70A /* Arena Tileset.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Arena Tileset.png"; sourceTree = "<group>"; };
 		E99E276E246874A50098E70A /* Forest Tileset.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Forest Tileset.png"; sourceTree = "<group>"; };
 		E99E276F246874B70098E70A /* Pig.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Pig.png; sourceTree = "<group>"; };
-		E99E2770246874C40098E70A /* Squirrel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Squirrel.png; sourceTree = "<group>"; };
 		E99E2771246883900098E70A /* femaleadventurerreverse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = femaleadventurerreverse.png; sourceTree = "<group>"; };
 		E99E2772246887B50098E70A /* pixel_font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pixel_font.png; sourceTree = "<group>"; };
 		E9E69922244BB34400AA66B3 /* Menu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Menu.cpp; sourceTree = "<group>"; };
@@ -169,16 +169,16 @@
 				E9E69923244BB34400AA66B3 /* Menu.h */,
 				E987A5D2244297F3009C1900 /* Tent.h */,
 				E987A5CF244297D6009C1900 /* Tent.cpp */,
-				E987A5DC2442A602009C1900 /* Forest.cpp */,
-				E987A5DD2442A602009C1900 /* Forest.h */,
+				E987A5DC2442A602009C1900 /* SnakePit.cpp */,
+				E987A5DD2442A602009C1900 /* SnakePit.h */,
+				E94E00562469F9EC0081399D /* fretless.mp3 */,
 				E94E004C2468F9AE0081399D /* Cobra.png */,
+				E94E00552469F6650081399D /* Snake Strike 01.wav */,
 				E99E2772246887B50098E70A /* pixel_font.png */,
-				E99E2770246874C40098E70A /* Squirrel.png */,
 				E99E276A246874730098E70A /* femaleadventurer.png */,
 				E99E2771246883900098E70A /* femaleadventurerreverse.png */,
 				E99E276F246874B70098E70A /* Pig.png */,
 				E99E276B2468747F0098E70A /* maleadventurer.png */,
-				E99E276D2468749A0098E70A /* Arena Tileset.png */,
 				E99E276E246874A50098E70A /* Forest Tileset.png */,
 				DBDF1B5C2323DE8D007CECB1 /* shaders */,
 				DBDF1B5A2323DE8D007CECB1 /* stb_image.h */,
@@ -270,19 +270,19 @@
 				DBDF1B5E2323DE8D007CECB1 /* ShaderProgram.cpp in Sources */,
 				E987A5C5244262DD009C1900 /* Util.h in Sources */,
 				E987A5D324429806009C1900 /* Tent.h in Sources */,
-				E987A5DE2442A603009C1900 /* Forest.cpp in Sources */,
+				E987A5DE2442A603009C1900 /* SnakePit.cpp in Sources */,
 				E99E276424679AB40098E70A /* Player.cpp in Sources */,
 				E99E276924679B180098E70A /* Player.h in Sources */,
 				E99E276824679B150098E70A /* Enemy.h in Sources */,
 				E99E276724679AC50098E70A /* Enemy.cpp in Sources */,
 				E99E277324688B040098E70A /* pixel_font.png in Sources */,
 				E94E004D2468F9B50081399D /* Cobra.png in Sources */,
-				E99E277524688B090098E70A /* Squirrel.png in Sources */,
 				E99E277624688B0B0098E70A /* femaleadventurer.png in Sources */,
 				E99E277724688B0D0098E70A /* femaleadventurerreverse.png in Sources */,
+				E94E00582469FA1A0081399D /* Snake Strike 01.wav in Sources */,
+				E94E00572469FA120081399D /* fretless.mp3 in Sources */,
 				E99E277824688B110098E70A /* Pig.png in Sources */,
 				E99E277924688B140098E70A /* maleadventurer.png in Sources */,
-				E99E277A24688B170098E70A /* Arena Tileset.png in Sources */,
 				E99E277B24688B1A0098E70A /* Forest Tileset.png in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

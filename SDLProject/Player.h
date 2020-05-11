@@ -3,6 +3,7 @@
 class Player : public Entity {
     
 public:
+    int attackCount = 0;
     
     Player() noexcept;
     

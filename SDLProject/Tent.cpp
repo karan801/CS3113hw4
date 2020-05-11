@@ -43,6 +43,5 @@ void Tent::Render(ShaderProgram *program) {
     glClearColor(0.275f, 0.510f, 0.706f, 1.0f);
     state.map->Render(program);
     state.player->Render(program);
-    GLuint fontTextureID = Util::LoadTexture("pixel_font.png");
-    Util::DrawText(program,fontTextureID,"Campsite",0.1f,0.1f,glm::vec3(3.0f, -7.0f, 0.0f));
+    
 }

@@ -21,8 +21,11 @@ Enemy::Enemy() noexcept
     animLeft = new int[8] {55, 54, 53, 52, 51, 50, 49, 48};
     animAttackRight = new int[6] {16, 17, 18, 19, 20, 21};
     animAttackLeft = new int[6] {63, 62, 61, 60, 59, 58}; //seems to be skipping one frame
+    animInjuryRight = new int[4] {24, 25, 26, 27};
+    animInjuryLeft = new int[4] {68, 69, 70, 71};
     animDeathRight = new int[6] {32, 33, 34, 35, 36, 37};
     animDeathLeft = new int[6] {79, 78, 77, 76, 75, 74};
+    
 
     animIndices = animDown;
     animFrames = 6;
@@ -183,24 +186,34 @@ void Enemy::AISnake (Entity *player) {
                 x = -1.0f;
                 //movement = glm::vec3(-1.0f,0.0f,0.0f);
                 animIndices = animLeft;
+                direction = false;
             } else {
                 x = 1.0f;
                 //movement = glm::vec3(1.0f,0.0f,0.0f);
                 animIndices = animRight;
+                direction = true;
             }
             if (player->position.y < position.y) {
                 y = -1.0f;
                 //movement = glm::vec3(0.0f,-1.0f,0.0f);
                 animIndices = animLeft;
+                direction = false;
+            } else if (player->position.y == position.y) {
+                animIndices = animRight;
+                direction = true;
             } else {
                 y = 1.0f;
                 //movement = glm::vec3(0.0f,1.0f,0.0f);
                 animIndices = animRight;
+                direction = true;
             }
             movement = glm::vec3(x, y, 0.0f);
             if (glm::distance(position, player->position) <1.0f) {
                 aiState=ATTACKING;
                 attack = true;
+                Mix_VolumeMusic(MIX_MAX_VOLUME);
+                Mix_Chunk *hiss = Mix_LoadWAV("Snake Strike 01.wav");
+                Mix_PlayChannel(-1, hiss, 0);
             } else if (glm::distance(position, player->position) > 10.0f) {
                 aiState=IDLE;
             }
@@ -211,17 +224,26 @@ void Enemy::AISnake (Entity *player) {
                 //movement = glm::vec3(-1.0f,0.0f,0.0f);
                 animIndices = animAttackLeft;
                 speed = 2.0f;
+                direction = false;
             } else {
                 x = 1.0f;
                 //movement = glm::vec3(1.0f,0.0f,0.0f);
                 animIndices = animAttackRight;
                 speed = 2.0f;
+                direction = true;
             }
             if (player->position.y < position.y) {
                 y = -1.0f;
+                animIndices = animAttackLeft;
+                direction = false;
                 //movement = glm::vec3(0.0f,-1.0f,0.0f);
+            } else if (player->position.y == position.y) {
+                   animIndices = animAttackRight;
+                   direction = true;
             } else {
                 y = 1.0f;
+                animIndices = animAttackRight;
+                direction = true;
                 //movement = glm::vec3(0.0f,1.0f,0.0f);
             }
             movement = glm::vec3(x, y, 0.0f);
@@ -255,12 +277,17 @@ void Enemy::Update(float deltaTime, Entity *player, Entity *enemies, int enemyCo
     if (isActive) {
         CheckCollision(player);
         if (player->attack && lastCollided == PLAYER){//|| collidedTopRight || collidedTopLeft)) {
-            isActive = false;
+            health -= 1;
+            if (health == 0) isActive = false;
+            animIndices = (direction)?animDeathRight:animDeathLeft;
             aiState = DEAD;
+            attack = false;
         } else if (!player->invulnerability && player->invulnerabilityCount == 0 && lastCollided == PLAYER && (collidedLeft || collidedRight || collidedBottom || collidedBottomLeft || collidedBottomRight || collidedTop || collidedTopRight || collidedTopLeft)){
             player->health -= 1;
+            player->animIndices = (direction)?animInjuryRight:animInjuryLeft;
             lastCollided = AIR;
             player->invulnerability = true;
+            attack = false;
         }
         AI(player, enemies, enemyCount);
         
@@ -294,12 +321,6 @@ void Enemy::Update(float deltaTime, Entity *player, Entity *enemies, int enemyCo
             animIndices = animIdle;
             animIndex = 0;
         }
-        
-        /*if (jump) {
-             Mix_VolumeMusic(MIX_MAX_VOLUME/4);
-             Mix_Chunk *bounce = Mix_LoadWAV("Bounce.wav");
-             Mix_PlayChannel(-1, bounce, 0);
-         }*/
         
         velocity.x = movement.x * speed; //if the player is tryna move, let them move
         velocity.y = movement.y * speed;

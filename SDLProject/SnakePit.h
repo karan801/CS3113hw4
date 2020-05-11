@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "Util.h"
 
-class Forest : public Scene {
+class SnakePit : public Scene {
     
 public:
     void Initialize() override;

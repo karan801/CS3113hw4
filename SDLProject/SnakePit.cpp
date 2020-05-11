@@ -1,10 +1,10 @@
-#include "Forest.h"
+#include "SnakePit.h"
 
-#define FOREST_WIDTH 16
-#define FOREST_HEIGHT 18
-#define FOREST_ENEMY_COUNT 6
+#define SNAKEPIT_WIDTH 16
+#define SNAKEPIT_HEIGHT 18
+#define SNAKEPIT_ENEMY_COUNT 6
 
-unsigned int forest_data[] =
+unsigned int snakepit_data[] =
 {// 0    1    2   3   4   5   6   7   8   9   10  11  12  13   14   15
     141, 141, 141,141,141,141,141,141,141,141,141,141,141,141, 141, 141,  // 0
     141, 141, 141,21, 21, 141,141,141,141,141,141,141,141,141, 141, 141,  //-1
@@ -26,26 +26,29 @@ unsigned int forest_data[] =
     141, 141, 141,141,141,141,141,141,141,141,141,141,141,141, 141, 141   //-17
 }; //list of nonsolid blocks: 0-59, 163 on "Forest Tileset.png"
 
-void Forest::Initialize() {
+void SnakePit::Initialize() {
     state.nextScene = -1;
     
     GLuint mapTextureID = Util::LoadTexture("Forest Tileset.png");
-    state.map = new Map(FOREST_WIDTH, FOREST_HEIGHT, forest_data, mapTextureID, 1.0f, 20, 17);
+    state.map = new Map(SNAKEPIT_WIDTH, SNAKEPIT_HEIGHT, snakepit_data, mapTextureID, 1.0f, 20, 17);
     
     state.player = new Player();
     
-    state.enemies = new Enemy[FOREST_ENEMY_COUNT];
-    for (int i = 0; i < FOREST_ENEMY_COUNT; i++){
-        state.enemies[i].position = glm::vec3(3.0f+(1.0f*i),-12.0f,0.0f);
-    }
+    state.enemies = new Enemy[SNAKEPIT_ENEMY_COUNT];
+    state.enemies[0].position = glm::vec3(7.0f,-14.0f,0.0f);
+    state.enemies[1].position = glm::vec3(8.0f,-13.0f,0.0f);
+    state.enemies[2].position = glm::vec3(12.0f,-4.0f,0.0f);
+    state.enemies[3].position = glm::vec3(10.0f,-9.0f,0.0f);
+    state.enemies[4].position = glm::vec3(13.0f,-13.0f,0.0f);
+    state.enemies[5].position = glm::vec3(12.0f,-13.0f,0.0f);
 }
     
-GameMode Forest::Update(float deltaTime) {
+GameMode SnakePit::Update(float deltaTime) {
     if (state.player->health > 0)
-        state.player->Update(deltaTime, state.player, state.enemies, FOREST_ENEMY_COUNT, state.map);
+        state.player->Update(deltaTime, state.player, state.enemies, SNAKEPIT_ENEMY_COUNT, state.map);
     int allDead = 0;
-    for (int i = 0; i < FOREST_ENEMY_COUNT; i++){
-        state.enemies[i].Update(deltaTime, state.player, state.enemies, FOREST_ENEMY_COUNT, state.map);
+    for (int i = 0; i < SNAKEPIT_ENEMY_COUNT; i++){
+        state.enemies[i].Update(deltaTime, state.player, state.enemies, SNAKEPIT_ENEMY_COUNT, state.map);
         if (!state.enemies[i].isActive) //for every dead enemy, update allDead
             allDead++;
     }
@@ -57,20 +60,17 @@ GameMode Forest::Update(float deltaTime) {
     if (state.player->position.y > -2) { //return to campsite!
         state.nextScene = 1;
     }
-    if (allDead == FOREST_ENEMY_COUNT) { //if all enemies calculated to be dead, then the game has been won
+    if (allDead == SNAKEPIT_ENEMY_COUNT) { //if all enemies calculated to be dead, then the game has been won
         state.nextScene = 3;
         return MENUW;
     }
     return GOING;
 }
     
-void Forest::Render(ShaderProgram *program) {
+void SnakePit::Render(ShaderProgram *program) {
     glClearColor(0.180f, 0.180f, 0.180f, 1.0f);
     state.map->Render(program);
     state.player->Render(program);
-    for (int i = 0; i < FOREST_ENEMY_COUNT; i++)
+    for (int i = 0; i < SNAKEPIT_ENEMY_COUNT; i++)
         state.enemies[i].Render(program);
-    GLuint fontTextureID = Util::LoadTexture("pixel_font.png");
-    Util::DrawText(program,fontTextureID,"Lives: "+std::to_string(state.player->health),0.1f,0.1f,glm::vec3(3.0f, -6.0f, 0.0f));
-    Util::DrawText(program,fontTextureID,"Forest",0.1f,0.1f,glm::vec3(3.0f, -7.0f, 0.0f));
 }

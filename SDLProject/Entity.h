@@ -41,6 +41,7 @@ public:
     int invulnerabilityCount = 0;
     
     bool attack = false;
+    bool direction = true; //for direction, default is right (true). left is false
     
     EntityType lastCollided;
     bool collidedTop = false;
@@ -67,6 +68,8 @@ public:
     int *animAttackLeft = NULL;
     int *animDeathRight = NULL;
     int *animDeathLeft = NULL;
+    int *animInjuryRight = NULL;
+    int *animInjuryLeft = NULL;
     
     int *animIndices = NULL;
     int animFrames = 0;

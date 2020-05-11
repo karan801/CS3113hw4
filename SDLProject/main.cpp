@@ -18,7 +18,7 @@
 #include "Scene.h"
 #include "Menu.h"
 #include "Tent.h"
-#include "Forest.h"
+#include "SnakePit.h"
 
 #include <vector>
 #include <iostream>
@@ -26,20 +26,6 @@
 #include <SDL_mixer.h>
 
 using namespace std;
-//======== to do list
-//====done
-//-main menu screen, name of game, press enter to start game (or take to first level).
-//-3 levels, don't need to be complicated or long. should be able to scroll.
-//End of three levels should show win
-//one looping background music, one sound effect
-//use any graphics or themes.
-//-Player should have three lives. If they run out of lives, should show they lose.
-//-No separate scene needed for losing, can just draw text.
-//-can lose life by falling pit, touching enemy or something else.
-//one type of moving ai, a couple in game, different behavior would be great
-//====incomplete
-//ability to kill AI (optional)
-//===================
 
 Scene *currentScene;
 Scene *sceneList[3];
@@ -52,12 +38,11 @@ ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 glm::mat4 uiViewMatrix, uiProjectionMatrix;
 GLuint uifontTextureID;
-//GLuint heartTextureID;
 
 Effects *effects;
 
 Mix_Music *music;
-Mix_Chunk *bounce;
+Mix_Chunk *hiss;
 
 void SwitchToScene(int sceneNum) {
     currentScene = sceneList[sceneNum];
@@ -73,13 +58,17 @@ void Initialize() {
 #ifdef _WINDOWS
     glewInit();
 #endif
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+    music = Mix_LoadMUS("fretless.mp3");
+    Mix_PlayMusic(music, -1);
+    Mix_VolumeMusic(MIX_MAX_VOLUME/4);
+    hiss = Mix_LoadWAV("Snake Strike 01.wav");
     
     glViewport(0, 0, 640, 480);
     
     program.Load("shaders/vertex_textured.glsl", "shaders/effects_textured.glsl");
     
     uifontTextureID = Util::LoadTexture("pixel_font.png");
-    //heartTextureID = Util::LoadTexture("platformPack_item017.png");
     uiViewMatrix = glm::mat4(1.0);
     uiProjectionMatrix = glm::ortho(-6.4f, 6.4f, -3.6f, 3.6f, -1.0f, 1.0f);
     
@@ -101,12 +90,8 @@ void Initialize() {
     // Initialize Game Objects
     sceneList[0] = new Menu();
     sceneList[1] = new Tent();
-    sceneList[2] = new Forest();
+    sceneList[2] = new SnakePit();
     SwitchToScene(0);
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
-    music = Mix_LoadMUS("crypto.mp3");
-    Mix_PlayMusic(music, -1);
-    Mix_VolumeMusic(MIX_MAX_VOLUME/4);
     
     effects = new Effects(projectionMatrix, viewMatrix);
     //effects->Start(GROW, 10.0f);
@@ -160,7 +145,7 @@ void ProcessInput() {
                     case SDLK_SPACE:
                         //if (state.player->collidedBottom) {
                         //}
-                        //currentScene->state.player->jump = true;
+                        currentScene->state.player->attack = true;
                         break;
                 }
                 break; // SDL_KEYDOWN
@@ -171,19 +156,25 @@ void ProcessInput() {
     if (keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_A]) {
         currentScene->state.player->movement.x += -1.5f;
         currentScene->state.player->animIndices = currentScene->state.player->animLeft;
+        currentScene->state.player->direction = false;
     }
     else if (keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D]) {
         currentScene->state.player->movement.x += 1.5f;
         currentScene->state.player->animIndices = currentScene->state.player->animRight;
+        currentScene->state.player->direction = true;
     }
     if (keys[SDL_SCANCODE_DOWN] || keys[SDL_SCANCODE_S]) {
         currentScene->state.player->movement.y += -1.5f;
-        if (glm::length(currentScene->state.player->movement.x) == 0) currentScene->state.player->animIndices = currentScene->state.player->animLeft;
+        if (glm::length(currentScene->state.player->movement.x) == 0){ currentScene->state.player->animIndices = currentScene->state.player->animLeft;
+            currentScene->state.player->direction = false;
+        }
     }
     else if (keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_W]) {
         currentScene->state.player->movement.y += 1.5f;
-        if (glm::length(currentScene->state.player->movement.x) == 0)
+        if (glm::length(currentScene->state.player->movement.x) == 0){
             currentScene->state.player->animIndices = currentScene->state.player->animRight;
+            currentScene->state.player->direction = false;
+        }
     }
     
     if (glm::length(currentScene->state.player->movement) > 1.5f) {
@@ -215,10 +206,6 @@ void Update() {
         if (mode != MENU && mode != MENUF && mode != MENUW){
             mode = currentScene->Update(FIXED_TIMESTEP);
         }
-        if (lastCollidedBottom == false && currentScene->state.player->collidedBottom) {
-            //effects->Start(SHAKE,5.0f); //can add effect/mess with about how to shake and give the user a real feeling of playing
-        }
-        lastCollidedBottom = currentScene->state.player->collidedBottom;
         
         effects->Update(FIXED_TIMESTEP);
         if (mode == MENUF) {
@@ -230,6 +217,9 @@ void Update() {
     
     
     viewMatrix = glm::mat4(1.0f);
+    if (currentScene == sceneList[0]) {
+        viewMatrix = glm::translate(viewMatrix,glm::vec3(-2.0f,2.0f,0));
+    }
     if (currentScene == sceneList[1]) { //for tent base level
         if (currentScene->state.player->position.x > 5.0f && currentScene->state.player->position.x < 10.0f) //normal view
             viewMatrix = glm::translate(viewMatrix,glm::vec3(-currentScene->state.player->position.x, 0, 0));
@@ -243,7 +233,7 @@ void Update() {
             viewMatrix = glm::translate(viewMatrix,glm::vec3(0, 7.0f, 0));
         else if (currentScene->state.player->position.y > -7.0f)//bottom view wall
             viewMatrix = glm::translate(viewMatrix,glm::vec3(0, 4.0f, 0));
-    } else if (currentScene == sceneList[2]) { //for forest level
+    } else if (currentScene == sceneList[2]) { //for snakepit level
         if (currentScene->state.player->position.x > 5.0f && currentScene->state.player->position.x < 10.0f) //normal view
             viewMatrix = glm::translate(viewMatrix,glm::vec3(-currentScene->state.player->position.x, 0, 0));
         else if (currentScene->state.player->position.x < 5.0f) //left view wall
@@ -276,14 +266,27 @@ void Render() {
     program.SetProjectionMatrix(uiProjectionMatrix);
     program.SetViewMatrix(uiViewMatrix);
     Util::DrawText(&program, fontTextureID, ("Lives: "+ to_string(currentScene->state.player->health)), 0.1f,0.1f, glm::vec3(-6, 3.2, 0));
+    if (currentScene == sceneList[1])
+        Util::DrawText(&program,fontTextureID,"Campsite",0.1f,0.1f,glm::vec3(-6, 2.7, 0));
+    if (currentScene == sceneList[2]) {
+        Util::DrawText(&program,fontTextureID,"The Snake Pit",0.1f,0.1f,glm::vec3(-6, 2.7, 0));
+        int enemiesleft = 0;
+        for (int i = 0; i < sizeof(currentScene->state.enemies); i++)
+            if (currentScene->state.enemies[i].isActive)
+                enemiesleft++;
+        Util::DrawText(&program,fontTextureID,("Enemies: " + to_string(enemiesleft)),0.1f,0.1f,glm::vec3(-6, 2.2, 0));
+    }
     //for (int i = 0; i < 3; i++) {
         //Util::DrawIcon(&program, heartTextureID, glm::vec3(5+(i*0.5f), 3.2, 0));
     //}
     
-    if (mode == MENUW)
-        Util::DrawText(&program,fontTextureID,"Congrats! You Won. Play again?",0.1f,0.1f,glm::vec3(2.25f, -5.0f, 0.0f));
+    if (mode == MENUW) {
+        Util::DrawText(&program,fontTextureID,"Congrats! Thanks for playing professor!",0.1f,0.1f,glm::vec3(-4.0f, 1.0f, 0.0f));
+        Util::DrawText(&program,fontTextureID,"I really hope to build more games in the future",0.1f,0.1f,glm::vec3(-4.0f, 0.5f, 0.0f));
+        Util::DrawText(&program,fontTextureID,"(preferably without the stress of other finals).",0.1f,0.1f,glm::vec3(-4.0f, 0.0f, 0.0f));
+    }
     if (mode == MENUF)
-        Util::DrawText(&program,fontTextureID,"Failure. You lost. Play again?",0.1f,0.1f,glm::vec3(2.25f, -5.0f, 0.0f));
+        Util::DrawText(&program,fontTextureID,"Failure. You lost. Play again?",0.1f,0.1f,glm::vec3(-4.0f, 0.0f, 0.0f));
     
     SDL_GL_SwapWindow(displayWindow);
 }

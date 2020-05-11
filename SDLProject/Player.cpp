@@ -6,7 +6,7 @@ Player::Player() noexcept
     movement = glm::vec3(0); //direction of moving
     acceleration = glm::vec3(0); //how fast speed increases
     velocity = glm::vec3(0); //how fast the entity is going
-    speed = 5.0f; // a scalar of how fast the entity is going
+    speed = 3.0f; // a scalar of how fast the entity is going
     
     health = 3;
     modelMatrix = glm::mat4(1.0f);
@@ -17,10 +17,12 @@ Player::Player() noexcept
     animIdle = new int[13] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
     animRight = new int[8] {13, 14, 15, 16, 17, 18, 19, 20};
     animLeft = new int[8] {117, 118, 119, 120, 121, 122, 123, 124};
-    animAttackRight = new int[8] {27, 28, 29, 30, 31, 32, 33, 34};
-    animAttackLeft = new int[8] {132, 133,134,135,136,137,138,139};
+    animAttackRight = new int[8] {26, 27, 28, 29, 30, 31, 32, 33};
+    animAttackLeft = new int[8] {131, 133,134,135,136,137,138};
+    animInjuryRight = new int[4] {78, 79, 80, 81};
+    animInjuryLeft = new int[4] {182, 183, 184, 185};
     animDeathRight = new int[2] {97, 98};
-    animDeathLeft = new int[2] {202, 203};
+    animDeathLeft = new int[2] {201, 202};
 
     animIndices = animDown;
     animFrames = 4;
@@ -170,7 +172,7 @@ void Player::CheckCollisionsX(Map *map) {
 void Player::Update(float deltaTime, Entity *player, Entity *enemies, int enemyCount, Map *map)
 {
     
-    if (type == PLAYER && invulnerability) {
+    if (invulnerability) {
         invulnerabilityCount++;
         if (invulnerabilityCount > 300) {
             invulnerability = false;
@@ -208,16 +210,14 @@ void Player::Update(float deltaTime, Entity *player, Entity *enemies, int enemyC
         animIndices = animIdle;
         animIndex = 0;
     }
-    /*
-    if (jump) { //instant VELOCTIY!
-        jump = false;
-        velocity.y += jumpPower;
-        if(type == PLAYER) {
-            Mix_VolumeMusic(MIX_MAX_VOLUME/4);
-            Mix_Chunk *bounce = Mix_LoadWAV("Bounce.wav");
-            Mix_PlayChannel(-1, bounce, 0);
+    if (attack) {
+        attackCount++;
+        if (attackCount > 100) {
+            animIndices = (direction)?animAttackRight:animAttackRight;
+            attack = false;
+            attackCount = 0;
         }
-    }*/
+    }
     
     velocity.x = movement.x * speed; //if the player is tryna move, let them move
     velocity.y = movement.y * speed;
